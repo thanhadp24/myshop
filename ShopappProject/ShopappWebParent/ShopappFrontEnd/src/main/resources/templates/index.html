@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments:: page_head('Shopapp', 'none')">
+</head>
+<body>
+<div class="container-fluid">
+	<div th:replace="navigation:: header_navbar"></div>
+	
+	<div th:replace="navigation:: search_nav"></div>
+	
+	<div>
+		<h1>Welcome to customers page</h1>
+	</div>
+	
+	<div class="row">
+		<div class="col-sm-2" th:each="category: ${categories}">
+			<div>
+				<img th:src="@{${category.imagePath}}" height="80px" width="80px">
+			</div>
+			<div>
+				<a th:href="@{'/c/' + ${category.alias}}">[[${category.name}]]</a>
+			</div>
+		</div>
+	</div>
+	
+	<div th:replace="navigation:: footer_navbar"></div>
+</div>
+</body>
+</html>

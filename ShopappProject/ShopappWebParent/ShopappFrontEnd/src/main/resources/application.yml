@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: ShopappFrontEnd
+  datasource:
+    url: jdbc:mysql://localhost:3306/shopappdb
+    username: root
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  security:
+    oauth2:
+      client:
+        registration:
+          facebook:
+            clientId: 1335116557925477
+            clientSecret: 2dbde0febdbaa1d9100f1a3168266c2a
+            scope: email, public_profile
+          google:
+            clientId: 1064547610760-bi9k9h7kvdomkbvcpkqjb3dba0atht9h.apps.googleusercontent.com
+            clientSecret: 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
+            scope: email, profile
+
+server:
+  port: 80
+  servlet:
+    context-path: /Shopapp

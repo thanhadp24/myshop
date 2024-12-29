@@ -1,0 +1,43 @@
+.icon-red {color: red;}
+.icon-silver {color: silver;}
+.icon-green {color: green;}
+.icon-gray {color: gray;}
+
+@media only screen and (max-width: 768px) {
+	
+	div.full-details {
+		display: none;
+	}
+	div.less-details {
+		display: block;
+	}
+	.field-search {
+		width: 48%;
+	}
+}
+
+@media only screen and (min-width:768px) and (max-width: 1024px) {
+	div.full-details {
+		display: table-cell;
+	}
+	div.less-details {
+		display: none;
+	}
+	
+	.hidable-column {
+		display: none;
+	}
+}
+
+
+@media only screen and (min-width:1024px) {
+	div.less-details {
+		display: none;
+	}
+	div.full-details {
+		display: block;
+	}
+	.hidable-column {
+		display: table-cell;
+	}
+}
