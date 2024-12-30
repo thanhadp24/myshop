@@ -1,14 +1,9 @@
 package com.shopapp.common.entity;
 
-import java.beans.Transient;
-import java.util.Date;
-
-import com.shopapp.common.enumm.AuthenticationType;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,75 +13,50 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "customers")
-public class Customer {
-
+@Table(name = "addresses")
+public class Address {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-
-	@Column(length = 45, unique = true, nullable = false)
-	private String email;
-
-	@Column(length = 64, nullable = false)
-	private String password;
-
+	
 	@Column(name = "first_name", length = 45, nullable = false)
 	private String firstName;
-
+	
 	@Column(name = "last_name", length = 45, nullable = false)
 	private String lastName;
-
+	
 	@Column(name = "phone_number", length = 15, nullable = false)
 	private String phoneNumber;
-
-	@Column(name = "address_line1", length = 64, nullable = false)
+	
+	
+	@Column(name = "address_line_1", length = 64, nullable = false)
 	private String addressLine1;
 
-	@Column(name = "address_line2", length = 64, nullable = true)
+	@Column(name = "address_line_2", length = 64)
 	private String addressLine2;
-
+	
 	@Column(length = 45, nullable = false)
 	private String city;
-
+	
 	@Column(length = 45, nullable = false)
 	private String state;
-
-	@Column(name = "postal_code", length = 10, nullable = false)
+	
+	@Column( name = "postal_code", length = 10, nullable = false)
 	private String postalCode;
-
-	@Column(name = "created_at")
-	private Date createdAt;
-
-	private boolean enabled;
-
-	@Column(name = "verification_code", length = 64)
-	private String verificationCode;
-
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "customer_id")
+	private Customer customer;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "country_id")
 	private Country country;
 	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "authentication_type", length = 10)
-	private AuthenticationType type;
-	
-	@Column(name = "reset_password_token", length = 30)
-	private String resetPasswordToken;
-	
-	public Customer() {
-	}
-	
-	public Customer(Integer id) {
-		this.id = id;
-	}
+	@Column(name = "default_address")
+	private boolean defaultForShipping;
 
-	public String getResetPasswordToken() {
-		return resetPasswordToken;
-	}
-	
-	public void setResetPasswordToken(String resetPasswordToken) {
-		this.resetPasswordToken = resetPasswordToken;
+	public Address() {
 	}
 	
 	public Integer getId() {
@@ -95,22 +65,6 @@ public class Customer {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public String getFirstName() {
@@ -177,28 +131,12 @@ public class Customer {
 		this.postalCode = postalCode;
 	}
 
-	public Date getCreatedAt() {
-		return createdAt;
+	public Customer getCustomer() {
+		return customer;
 	}
 
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
-
-	public String getVerificationCode() {
-		return verificationCode;
-	}
-
-	public void setVerificationCode(String verificationCode) {
-		this.verificationCode = verificationCode;
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 
 	public Country getCountry() {
@@ -208,26 +146,35 @@ public class Customer {
 	public void setCountry(Country country) {
 		this.country = country;
 	}
-	
-	public AuthenticationType getType() {
-		return type;
+
+	public boolean isDefaultForShipping() {
+		return defaultForShipping;
 	}
 
-	public void setType(AuthenticationType type) {
-		this.type = type;
+	public void setDefaultForShipping(boolean defaultForShipping) {
+		this.defaultForShipping = defaultForShipping;
 	}
 	
 	@Override
+	public int hashCode() {
+		return Objects.hash(getId());
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) {
+			return true;
+		}
+		
+		if(!(obj instanceof Address that)) {
+			return false;
+		}
+		
+		return that.getId() == getId();
+	}
+
+	@Override
 	public String toString() {
-		return "Customer [id=" + id + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName + "]";
-	}
-	
-	public String getFullName() {
-		return firstName + " " + lastName;
-	}
-	
-	@Transient
-	public String getAddress() {
 		StringBuilder address = new StringBuilder(firstName);
 		 
 		if(lastName != null && !lastName.isEmpty()) address.append(" " + lastName);
@@ -247,4 +194,6 @@ public class Customer {
 		
 		return address.toString();
 	}
+	
+	
 }

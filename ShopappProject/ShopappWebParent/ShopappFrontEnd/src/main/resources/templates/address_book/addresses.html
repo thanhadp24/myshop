@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments:: page_head('Address Book', 'none')">
+</head>
+<body>
+<div class="container-fluid">
+	<div th:replace="navigation:: header_navbar"></div>
+	
+	<div th:replace="navigation:: search_nav"></div>
+	
+	<div class="text-center">
+		<h1>Your address book</h1>
+		<h3>
+			<a th:href="@{/address_book/new}">Create new address</a>	
+		</h3>
+	</div>
+	
+	<div class="alert alert-success text-center" th:if="${message != null}">
+	[[${message}]]
+	</div>
+	
+	<div class="row m-1">
+		<div class="col-sm-6 mt-2">
+			<div class="card" th:classappend="${usePrimaryAddressAsDefault ? 'bg-warning': ''}">
+				<div class="card-header">
+					<div class="row">
+						<div class="col">
+							<b>Your primary address</b>
+							<th:block th:if="${usePrimaryAddressAsDefault}">
+								<span class="text-danger">[Default]</span>
+							</th:block>
+							<th:block th:unless="${usePrimaryAddressAsDefault}">
+								<a th:href="@{/address_book/default/0}">[Set as default]</a>
+							</th:block>
+						</div>
+						<div class="col">
+							<div class="float-right">
+								<a class="fa-regular fa-pen-to-square icon-gray fa-lg" 
+								title="Edit this primary address"
+							th:href="@{/account_details(redirect=address_book)}"></a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="card-body">
+					[[${customer.address}]]
+				</div>
+			</div>
+		</div>
+		
+		<th:block th:each="address, status: ${addresses}">
+		<div class="col-sm-6 mt-2">
+			<div class="card" th:classappend="${address.defaultForShipping}?'bg-warning':''">
+				<div class="card-header">
+					<div class="row">
+						<div class="col">
+							<b>Address #[[${status.count + 1}]]</b>
+							<th:block th:if="${address.defaultForShipping}">
+								<span class="text-danger">[Default]</span>
+							</th:block>
+							<th:block th:unless="${address.defaultForShipping}">
+								<a th:href="@{'/address_book/default/' + ${address.id}}">[Set as default]</a>
+							</th:block>
+						</div>
+						<div class="col">
+							<div class="float-right">
+								<a class="fa-regular fa-pen-to-square icon-gray fa-lg" 
+								title="Edit this address"
+								th:href="@{'/address_book/edit/' + ${address.id}}"></a>
+								&nbsp;
+								<a class="fa-solid fa-trash icon-gray fa-lg linkDelete" 
+								th:entityId="${address.id}"
+								title="Delete this address"
+								th:href="@{'/address_book/delete/' + ${address.id}}"></a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="card-body">
+					[[${address}]]
+				</div>
+			</div>
+		</div>
+		</th:block>
+	</div>
+	
+	<div>&nbsp;</div>
+		
+	<div th:replace="fragments:: modal_dialog"></div>
+	<div th:replace="navigation:: footer_navbar"></div>
+</div>
+<script>
+
+$(document).ready(function() {
+	$(".linkDelete").on('click', function(e){
+		e.preventDefault();
+		confirmDeleteModal($(this), 'address');
+	})
+})
+
+function confirmDeleteModal(link, entity){
+	entityId = link.attr('entityId');
+	$('#yes-btn').attr("href", link.attr("href"));
+	$('#modalBody').text('Are you sure to delete ' + entity +' ID: ' + entityId + "?");
+	$('#modalDialog').modal();
+}
+
+</script>
+</body>
+</html>

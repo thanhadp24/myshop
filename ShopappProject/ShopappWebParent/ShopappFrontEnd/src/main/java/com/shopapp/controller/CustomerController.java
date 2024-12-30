@@ -80,10 +80,17 @@ public class CustomerController {
 			Model model, RedirectAttributes ra) {
 		
 		customerService.update(customer);
+		ra.addFlashAttribute("message", "Your account has been updated successfully.");		
 		updateName4Authentication(customer, request);
 		
-		ra.addFlashAttribute("message", "Your account has been updated successfully.");		
-		return "redirect:/account_details";
+		String redirectOption = request.getParameter("redirect");
+		String redirectURL = "redirect:/account_details";
+		System.out.println(redirectOption);
+		if("address_book".equals(redirectOption)) {
+			redirectURL = "redirect:/address_book";
+		}
+		
+		return redirectURL;
 	}
 	
 	@GetMapping("/forgot_password")

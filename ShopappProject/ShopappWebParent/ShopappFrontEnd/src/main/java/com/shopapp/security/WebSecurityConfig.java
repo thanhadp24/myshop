@@ -50,7 +50,8 @@ public class WebSecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/account_details", "/update_account_details", "/cart")
+				.requestMatchers("/account_details", "/update_account_details", "/cart",
+						"/address_book/**")
 				.authenticated()
 				.anyRequest()
 				.permitAll())
