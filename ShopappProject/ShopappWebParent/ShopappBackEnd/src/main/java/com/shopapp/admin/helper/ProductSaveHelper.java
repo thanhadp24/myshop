@@ -13,8 +13,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.shopapp.admin.utils.FileUploadUtil;
-import com.shopapp.common.entity.Product;
-import com.shopapp.common.entity.ProductImage;
+import com.shopapp.common.entity.product.Product;
+import com.shopapp.common.entity.product.ProductImage;
 
 public class ProductSaveHelper {
 	

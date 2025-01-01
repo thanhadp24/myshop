@@ -12,7 +12,7 @@ import org.springframework.test.annotation.Rollback;
 import com.shopapp.admin.repository.ProductRepository;
 import com.shopapp.common.entity.Brand;
 import com.shopapp.common.entity.Category;
-import com.shopapp.common.entity.Product;
+import com.shopapp.common.entity.product.Product;
 
 import jakarta.persistence.EntityManager;
 

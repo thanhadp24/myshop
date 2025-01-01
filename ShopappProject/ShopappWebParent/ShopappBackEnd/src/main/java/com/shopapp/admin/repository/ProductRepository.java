@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.shopapp.common.entity.Product;
+import com.shopapp.common.entity.product.Product;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer>{

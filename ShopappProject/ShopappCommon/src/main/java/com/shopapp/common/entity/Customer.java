@@ -9,51 +9,17 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "customers")
-public class Customer {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+public class Customer extends AbstractCountryAddress{
 
 	@Column(length = 45, unique = true, nullable = false)
 	private String email;
 
 	@Column(length = 64, nullable = false)
 	private String password;
-
-	@Column(name = "first_name", length = 45, nullable = false)
-	private String firstName;
-
-	@Column(name = "last_name", length = 45, nullable = false)
-	private String lastName;
-
-	@Column(name = "phone_number", length = 15, nullable = false)
-	private String phoneNumber;
-
-	@Column(name = "address_line1", length = 64, nullable = false)
-	private String addressLine1;
-
-	@Column(name = "address_line2", length = 64, nullable = true)
-	private String addressLine2;
-
-	@Column(length = 45, nullable = false)
-	private String city;
-
-	@Column(length = 45, nullable = false)
-	private String state;
-
-	@Column(name = "postal_code", length = 10, nullable = false)
-	private String postalCode;
 
 	@Column(name = "created_at")
 	private Date createdAt;
@@ -63,10 +29,6 @@ public class Customer {
 	@Column(name = "verification_code", length = 64)
 	private String verificationCode;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "country_id")
-	private Country country;
-	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "authentication_type", length = 10)
 	private AuthenticationType type;
@@ -89,14 +51,6 @@ public class Customer {
 		this.resetPasswordToken = resetPasswordToken;
 	}
 	
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
 	public String getEmail() {
 		return email;
 	}
@@ -111,70 +65,6 @@ public class Customer {
 
 	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
-
-	public String getAddressLine1() {
-		return addressLine1;
-	}
-
-	public void setAddressLine1(String addressLine1) {
-		this.addressLine1 = addressLine1;
-	}
-
-	public String getAddressLine2() {
-		return addressLine2;
-	}
-
-	public void setAddressLine2(String addressLine2) {
-		this.addressLine2 = addressLine2;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getPostalCode() {
-		return postalCode;
-	}
-
-	public void setPostalCode(String postalCode) {
-		this.postalCode = postalCode;
 	}
 
 	public Date getCreatedAt() {
@@ -201,14 +91,6 @@ public class Customer {
 		this.verificationCode = verificationCode;
 	}
 
-	public Country getCountry() {
-		return country;
-	}
-
-	public void setCountry(Country country) {
-		this.country = country;
-	}
-	
 	public AuthenticationType getType() {
 		return type;
 	}
@@ -217,34 +99,9 @@ public class Customer {
 		this.type = type;
 	}
 	
-	@Override
-	public String toString() {
-		return "Customer [id=" + id + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName + "]";
-	}
-	
+	@Transient
 	public String getFullName() {
 		return firstName + " " + lastName;
 	}
 	
-	@Transient
-	public String getAddress() {
-		StringBuilder address = new StringBuilder(firstName);
-		 
-		if(lastName != null && !lastName.isEmpty()) address.append(" " + lastName);
-		
-		if(!addressLine1.isEmpty()) address.append(".Address: " + addressLine1);
-		
-		if(addressLine2 != null && !addressLine2.isEmpty()) address.append(" - " + addressLine2);
-		
-		if(!city.isEmpty()) address.append(", " + city);
-		
-		if(state != null && !state.isEmpty()) address.append(", " + state);
-		
-		address.append(", " + country.getName());
-		
-		if(!postalCode.isEmpty()) address.append(".Postal Code: " + postalCode);
-		if(!phoneNumber.isEmpty()) address.append(".Phone Number: " + phoneNumber);
-		
-		return address.toString();
-	}
 }

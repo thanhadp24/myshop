@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.shopapp.common.entity.CartItem;
 import com.shopapp.common.entity.Customer;
-import com.shopapp.common.entity.Product;
+import com.shopapp.common.entity.product.Product;
 import com.shopapp.exception.ShoppingCartException;
 import com.shopapp.repository.CartRepository;
 import com.shopapp.repository.ProductRepository;

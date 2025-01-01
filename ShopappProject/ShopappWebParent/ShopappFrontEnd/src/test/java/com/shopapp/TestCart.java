@@ -12,7 +12,7 @@ import org.springframework.test.annotation.Rollback;
 
 import com.shopapp.common.entity.CartItem;
 import com.shopapp.common.entity.Customer;
-import com.shopapp.common.entity.Product;
+import com.shopapp.common.entity.product.Product;
 import com.shopapp.repository.CartRepository;
 
 @DataJpaTest

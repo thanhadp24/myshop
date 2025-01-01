@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments:: page_head('Orders Manager', 'none')">
+</head>
+<body>
+
+	<div class="container-fluid">
+		<div th:replace="navigation:: navbar"></div>
+
+		<div>
+			<h2 class="text-primary">Manage Orders</h2>
+		</div>
+
+		<div th:replace="fragments:: message"></div>
+		
+		<div th:replace="fragments:: search"></div>
+		
+		<div class="full-details">
+			<table class="table table-responsive-xl table-bordered table-hover table-striped">
+				<thead>
+					<tr>
+						<th th:replace="fragments:: column_link('id', 'ID', 'none')"></th>
+						<th th:replace="fragments:: column_link('customer', 'Customers', 'none')"></th>
+						<th th:replace="fragments:: column_link('total', 'Total', 'none')"></th>
+						<th th:replace="fragments:: column_link('orderTime', 'Order Time', 'none')"></th>
+						<th class="hidable-column">
+							<th th:replace="fragments:: column_link('destination', 'Destination', 'tag')"></th>
+						</th>
+						<th class="hidable-column">
+							<th th:replace="fragments:: column_link('paymentMethod', 'Payment Method', 'tag')"></th>
+						</th>
+						<th class="hidable-column">
+							<th th:replace="fragments:: column_link('orderStatus', 'Status', 'tag')"></th>
+						</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="order: ${orders}">
+						<td>[[${order.id}]]</td>
+						<td>
+							<a class="linkCustomerDetail"
+								th:href="@{'/customers/detail/' + ${order.customer.id}}">
+								[[${order.customer.fullName}]]</a>
+						</td>
+						<td>
+							<div th:replace="fragments:: format_currency(${order.total})"></div>
+						</td>
+						<td>
+							<div th:replace="fragments:: format_time(${order.orderTime})"></div>
+						</td>
+						<td class="hidable-column">[[${order.destination}]]</td>
+						<td class="hidable-column">[[${order.paymentMethod}]]</td>
+						<td class="hidable-column">[[${order.orderStatus}]]</td>
+						
+						<td>
+							<a class="fa-regular fa-file fa-lg icon-green link-detail" 
+								th:href="@{'/orders/detail/' + ${order.id}}"
+								title="View detail of this order"></a> &nbsp;
+							<div th:replace="fragments:: entity_edit('/orders/edit/' + ${order.id}, 'order')"></div>
+							<div th:replace="fragments:: entity_delete('/orders/delete/' + ${order.id}, 'order', ${order.id}, true)"></div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="less-details">
+			<div class="row m-1" th:each="order: ${orders}">
+				<div class="col-2">
+					[[${order.id}]]
+				</div>
+				<div class="col-10">
+					<div>[[${order.customer.fullName}]], [[${order.country}]]</div>
+					<div><small>[[${order.orderTime}]] - [[${order.orderStatus}]]</small></div>
+					<div>
+						<div th:replace="fragments:: format_currency(${order.total})">Total:</div>
+						- [[${order.paymentMethod}]]
+					</div>
+					<div>
+						<a class="fa-regular fa-file fa-lg icon-green link-detail" 
+								th:href="@{'/orders/detail/' + ${order.id}}"
+								title="View detail of this order"></a> &nbsp;
+							<div th:replace="fragments:: entity_edit('/orders/edit/' + ${order.id}, 'order')"></div>
+							<div th:replace="fragments:: entity_delete('/orders/delete/' + ${order.id}, 'order', ${order.id}, true)"></div>
+					</div>
+				</div>	
+			</div>
+		</div>
+
+		<div th:replace="fragments:: pagination('orders')"></div>
+
+		<div th:replace="modal_fragments:: modal_confirm"></div>
+		
+		<div class="modal" id="customerDetailModal">
+			<div class="modal-dialog modal-xl">
+			 	<div class="modal-content">
+			 	</div>
+			</div>
+		</div>
+		
+		<div class="modal" id="orderDetailModal">
+			<div class="modal-dialog modal-xl">
+			 	<div class="modal-content">
+			 	</div>
+			</div>
+		</div>
+
+		<div th:replace="fragments:: footer"></div>
+	</div>
+
+	
+	<script>
+		moduleURL = "[[@{/orders}]]";
+		$(document).ready(function() {
+			$(".linkCustomerDetail").on("click", function(e){
+				e.preventDefault();
+				linkDetailURL = $(this).attr("href");
+				$("#customerDetailModal").modal("show").find(".modal-content").load(linkDetailURL);
+			});
+			
+			$(".link-detail").on("click", function(e){
+				e.preventDefault();
+				linkDetailURL = $(this).attr("href");
+				$("#orderDetailModal").modal("show").find(".modal-content").load(linkDetailURL);
+			});
+			
+			$(".link-delete").on('click', function(e){
+				e.preventDefault();
+				confirmDeleteModal($(this), 'brand');
+			})
+		})
+	</script>
+	<script th:src="@{/js/common_link.js}"></script>
+</body>
+</html>

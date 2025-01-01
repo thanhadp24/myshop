@@ -2,18 +2,11 @@ package com.shopapp.common.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "currencies")
-public class Currency {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+public class Currency extends IdBaseEntity{
 
 	@Column(nullable = false, length = 64)
 	private String name;
@@ -31,14 +24,6 @@ public class Currency {
 		this.name = name;
 		this.symbol = symbol;
 		this.code = code;
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
 	}
 
 	public String getName() {

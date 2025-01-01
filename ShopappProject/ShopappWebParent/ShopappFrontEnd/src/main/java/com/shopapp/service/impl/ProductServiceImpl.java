@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.shopapp.common.Common;
-import com.shopapp.common.entity.Product;
+import com.shopapp.common.entity.product.Product;
 import com.shopapp.common.exception.ProductNotFoundException;
 import com.shopapp.repository.ProductRepository;
 import com.shopapp.service.ProductService;

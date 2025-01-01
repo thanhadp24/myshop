@@ -7,9 +7,6 @@ import java.util.Set;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -17,11 +14,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "brands")
-public class Brand {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+public class Brand extends IdBaseEntity{
 	
 	@Column(name = "name", length = 45, nullable = false, unique = true)
 	private String name;
@@ -48,14 +41,6 @@ public class Brand {
 		this.name = name;
 	}
 
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
 
 	public String getName() {
 		return name;

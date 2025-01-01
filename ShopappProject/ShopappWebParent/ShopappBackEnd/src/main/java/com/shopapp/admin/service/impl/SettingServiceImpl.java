@@ -53,4 +53,9 @@ public class SettingServiceImpl implements SettingService{
 	public List<Setting> getMailTemplates() {
 		return settingRepository.findByCategory(SettingCategory.MAIL_TEMPLATE);
 	}
+	
+	@Override
+	public List<Setting> getCurrencySettings() {
+		return settingRepository.findByCategory(SettingCategory.CURRENCY);
+	}
 }

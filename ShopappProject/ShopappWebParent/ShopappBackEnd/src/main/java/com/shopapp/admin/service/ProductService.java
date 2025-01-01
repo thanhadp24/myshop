@@ -1,7 +1,7 @@
 package com.shopapp.admin.service;
 
 import com.shopapp.admin.helper.PagingAndSortingHelper;
-import com.shopapp.common.entity.Product;
+import com.shopapp.common.entity.product.Product;
 import com.shopapp.common.exception.ProductNotFoundException;
 
 public interface ProductService {

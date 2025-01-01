@@ -27,7 +27,7 @@ import com.shopapp.admin.service.BrandService;
 import com.shopapp.admin.service.CategoryService;
 import com.shopapp.admin.service.ProductService;
 import com.shopapp.admin.utils.FileUploadUtil;
-import com.shopapp.common.entity.Product;
+import com.shopapp.common.entity.product.Product;
 import com.shopapp.common.exception.ProductNotFoundException;
 
 @Controller

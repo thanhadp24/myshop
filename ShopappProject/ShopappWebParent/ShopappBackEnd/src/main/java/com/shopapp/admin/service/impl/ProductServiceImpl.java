@@ -13,7 +13,7 @@ import com.shopapp.admin.common.Common;
 import com.shopapp.admin.helper.PagingAndSortingHelper;
 import com.shopapp.admin.repository.ProductRepository;
 import com.shopapp.admin.service.ProductService;
-import com.shopapp.common.entity.Product;
+import com.shopapp.common.entity.product.Product;
 import com.shopapp.common.exception.ProductNotFoundException;
 
 @Service
