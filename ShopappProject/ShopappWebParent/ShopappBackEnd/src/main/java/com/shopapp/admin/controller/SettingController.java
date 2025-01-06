@@ -56,7 +56,7 @@ public class SettingController {
 		saveCurrencySymbol(request, settingBag);
 		updateSettingValuesFromForm(request, settingBag.getSettings());
 		
-		ra.addFlashAttribute("message", "General setting have been saved success");
+		ra.addFlashAttribute("message", "General setting have been saved successfully");
 		
 		return "redirect:/settings";
 	}
@@ -66,8 +66,8 @@ public class SettingController {
 		List<Setting> mailServers = settingService.getMailServers();
 		updateSettingValuesFromForm(request, mailServers);
 		
-		ra.addFlashAttribute("message", "Mail server setting have been saved success");
-		return "redirect:/settings";
+		ra.addFlashAttribute("message", "Mail server setting have been saved successfully");
+		return "redirect:/settings#mailServer";
 	}
 	
 	@PostMapping("/settings/save_mail_templates")
@@ -75,8 +75,17 @@ public class SettingController {
 		List<Setting> mailTemplates = settingService.getMailTemplates();
 		updateSettingValuesFromForm(request, mailTemplates);
 		
-		ra.addFlashAttribute("message", "Mail templates setting have been saved success");
-		return "redirect:/settings";
+		ra.addFlashAttribute("message", "Mail templates setting have been saved successfully");
+		return "redirect:/settings#mailTemplates";
+	}
+	
+	@PostMapping("/settings/save_payment")
+	public String savePayment(HttpServletRequest request, RedirectAttributes ra) {
+		List<Setting> payments = settingService.getPayments();
+		updateSettingValuesFromForm(request, payments);
+		
+		ra.addFlashAttribute("message", "Payment setting have been saved successfully");
+		return "redirect:/settings#payment";
 	}
 
 	private void saveSiteLogo(MultipartFile multipartFile, GeneralSettingBagHelper settingBag) throws IOException {

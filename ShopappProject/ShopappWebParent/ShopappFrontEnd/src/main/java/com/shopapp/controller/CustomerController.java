@@ -85,11 +85,14 @@ public class CustomerController {
 		
 		String redirectOption = request.getParameter("redirect");
 		String redirectURL = "redirect:/account_details";
-		System.out.println(redirectOption);
+
 		if("address_book".equals(redirectOption)) {
 			redirectURL = "redirect:/address_book";
+		}else if("cart".equals(redirectOption)) {
+			redirectURL = "redirect:/cart";
+		}else if("checkout".equals(redirectOption)) {
+			redirectURL = "redirect:/address_book?redirect=checkout";
 		}
-		
 		return redirectURL;
 	}
 	

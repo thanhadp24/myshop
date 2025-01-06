@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.shopapp.common.entity.AbstractAddress;
+import com.shopapp.common.entity.Address;
 import com.shopapp.common.entity.Customer;
 import com.shopapp.common.enumm.OrderStatus;
 import com.shopapp.common.enumm.PaymentMethod;
@@ -58,6 +59,9 @@ public class Order extends AbstractAddress{
 	
 	@Enumerated(EnumType.STRING)
 	private OrderStatus orderStatus;
+	
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+	private Set<OrderTrack> orderTracks = new HashSet<>();
 	
 	public Order() {
 	}
@@ -166,6 +170,14 @@ public class Order extends AbstractAddress{
 		this.orderStatus = orderStatus;
 	}
 	
+	public Set<OrderTrack> getOrderTracks() {
+		return orderTracks;
+	}
+	
+	public void setOrderTracks(Set<OrderTrack> orderTracks) {
+		this.orderTracks = orderTracks;
+	}
+	
 	@Transient
 	public String getDestination() {
 		String destination = city + ", ";
@@ -183,5 +195,38 @@ public class Order extends AbstractAddress{
 		setState(customer.getState());
 		setCountry(customer.getCountry().getName());
 		setPostalCode(customer.getPostalCode());
+	}
+
+	public void copyShippingAddress(Address address) {
+		setFirstName(address.getFirstName());
+		setLastName(address.getLastName());
+		setPhoneNumber(address.getPhoneNumber());
+		setAddressLine1(address.getAddressLine1());
+		setCity(address.getCity());
+		setState(address.getState());
+		setCountry(address.getCountry().getName());
+		setPostalCode(address.getPostalCode());
+	}
+	
+	@Transient
+	public String getShippingAddress() {
+		StringBuilder address = new StringBuilder(firstName);
+		 
+		if(lastName != null && !lastName.isEmpty()) address.append(" " + lastName);
+		
+		if(!addressLine1.isEmpty()) address.append(".Address: " + addressLine1);
+		
+		if(addressLine2 != null && !addressLine2.isEmpty()) address.append(" - " + addressLine2);
+		
+		if(!city.isEmpty()) address.append(", " + city);
+		
+		if(state != null && !state.isEmpty()) address.append(", " + state);
+		
+		address.append(", " + country);
+		
+		if(!postalCode.isEmpty()) address.append(".Postal Code: " + postalCode);
+		if(!phoneNumber.isEmpty()) address.append(".Phone Number: " + phoneNumber);
+		
+		return address.toString();
 	}
 }

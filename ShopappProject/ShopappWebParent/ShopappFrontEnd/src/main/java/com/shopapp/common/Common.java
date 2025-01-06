@@ -4,4 +4,6 @@ public class Common {
 	public static final Integer PRODUCTS_PER_PAGE = 5; 
 	
 	public static final Integer PRODUCTS_PER_PAGE_SEARCH = 5;
+	
+	public static final int DIM_DIVISOR = 139;
 }

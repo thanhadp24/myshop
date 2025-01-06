@@ -58,4 +58,9 @@ public class SettingServiceImpl implements SettingService{
 	public List<Setting> getCurrencySettings() {
 		return settingRepository.findByCategory(SettingCategory.CURRENCY);
 	}
+	
+	@Override
+	public List<Setting> getPayments() {
+		return settingRepository.findByCategory(SettingCategory.PAYMENT);
+	}
 }

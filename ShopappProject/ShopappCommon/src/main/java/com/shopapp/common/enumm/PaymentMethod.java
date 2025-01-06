@@ -2,5 +2,5 @@ package com.shopapp.common.enumm;
 
 public enum PaymentMethod {
 
-	COD, CREDIT_CARD
+	COD, CREDIT_CARD, PAYPAL
 }

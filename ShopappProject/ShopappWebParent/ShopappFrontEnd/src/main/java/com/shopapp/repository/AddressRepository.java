@@ -32,4 +32,7 @@ public interface AddressRepository extends JpaRepository<Address, Integer>{
 			+ "AND a.customer.id = :customerId")
 	@Modifying
 	public void setNoneDefault4Others(Integer defaultAddressId, Integer customerId);
+	
+	@Query("SELECT a FROM Address a WHERE a.customer.id = :customerId AND a.defaultForShipping = true")
+	public Address findDefaultByCustomer(Integer customerId);
 }

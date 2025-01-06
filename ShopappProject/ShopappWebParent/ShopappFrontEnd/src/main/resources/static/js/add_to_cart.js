@@ -17,6 +17,7 @@ function addToCart(){
 			xhr.setRequestHeader(csrfHeaderName, csrfValue)
 		}
 	}).done(function(response){
+		$("#yes-btn").hide()
 		showDialog("Shopping cart", response)
 	}).fail(function(){
 		showErrorModal("Error while adding product to cart")

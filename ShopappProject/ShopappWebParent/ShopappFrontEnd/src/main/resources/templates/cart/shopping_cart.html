@@ -56,7 +56,22 @@
 				<span th:if="${CURRENCY_SYMBOL_POSITION} == 'after price'" th:remove="tag">[[${CURRENCY_SYMBOL}]]</span>
 			</div>
 			<div class="mt-2">
-				<button class="btn btn-danger">Checkout</button>
+				<form th:action="@{/checkout}">
+					<div th:if="${shippingSupported}">
+						<button type="submit" class="btn btn-danger">Checkout</button>
+					</div>
+				</form>
+				<div th:unless="${shippingSupported}">
+					<div>
+						<span class="h4 text-warning">No shipping available for your location</span>
+					</div>
+					<div th:if="${usePrimaryAddressAsDefault}">
+						<a th:href="@{/account_details(redirect=cart)}">Update your address</a>
+					</div>
+					<div th:unless="${usePrimaryAddressAsDefault}">
+						<a th:href="@{/address_book(redirect=cart)}">Use another shipping address</a>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

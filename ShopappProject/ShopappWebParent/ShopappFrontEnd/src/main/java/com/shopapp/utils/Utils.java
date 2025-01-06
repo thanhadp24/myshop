@@ -1,5 +1,7 @@
 package com.shopapp.utils;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Properties;
 
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -7,6 +9,7 @@ import org.springframework.security.authentication.RememberMeAuthenticationToken
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 
+import com.shopapp.common.bean.CurrencySettingBag;
 import com.shopapp.common.bean.EmailSettingBag;
 import com.shopapp.security.oauth.CustomerOAuth2User;
 
@@ -52,5 +55,41 @@ public class Utils {
 		}
 		
 		return customerEmail;
+	}
+	
+	public static String formatCurrency(float amount, CurrencySettingBag settings) {
+		String symbol = settings.getSymbol();
+		String symbolPos = settings.getSymbolPos();
+		int decimalDigits = settings.getDecimalDigits();
+		String decimalPointType = settings.getDecimalPointType();
+		String thousandPointType = settings.getThousandPointType();
+		
+		String pattern = symbolPos.equals("before price") ? symbol :"";
+		pattern += "###,###";
+		
+		if(decimalDigits > 0) {
+			pattern += ".";
+			for(int i = 0; i < decimalDigits; i++) {
+				pattern += "#";
+			}
+		}
+		
+		pattern += symbolPos.equals("after price") ? symbol: "";
+		
+		char thousandSeperator = thousandPointType.equals("POINT") ? '.':',';
+		char decimalSeperator = decimalPointType.equals("POINT") ? '.':',';
+		
+		DecimalFormat df = new DecimalFormat(pattern);
+		
+		DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance();
+		dfs.setDecimalSeparator(decimalSeperator);
+		dfs.setGroupingSeparator(thousandSeperator);
+		
+		df.setDecimalFormatSymbols(dfs);
+		
+		return df.format(amount);
+	}
+	public static void main(String[] args) {
+		System.out.println("dfa".charAt(0));
 	}
 }

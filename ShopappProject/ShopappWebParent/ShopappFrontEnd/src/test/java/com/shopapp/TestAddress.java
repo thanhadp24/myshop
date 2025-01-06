@@ -1,5 +1,7 @@
 package com.shopapp;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -44,5 +46,12 @@ public class TestAddress {
 	@Test
 	public void setNoneForOthers() {
 		addressRepository.setNoneDefault4Others(5, 3);
+	}
+	
+	@Test
+	public void testGetDefault() {
+		Address address = addressRepository.findDefaultByCustomer(1);
+		System.out.println(address);
+		assertThat(address.getId()).isGreaterThan(0);
 	}
 }

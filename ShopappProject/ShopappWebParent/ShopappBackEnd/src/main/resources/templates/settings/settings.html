@@ -55,7 +55,7 @@
 			<div th:replace="settings/mail_template:: content"></div>
 		</div>
 		<div class="tab-pane p-3" id="payment" role="tabpanel">
-			<h2>Payment</h2>
+			<div th:replace="settings/payment:: content"></div>
 		</div>
 	</div>
 	
@@ -78,7 +78,9 @@
 	csrfValue = "[[${_csrf.token}]]";
 	
 	$(document).ready(function(){
-		$('#mailToolBar').richText();
+		$('.mailToolBar').each(function(idx, element){
+			$(element).richText({height:500});
+		});
 	})
 	
 </script>

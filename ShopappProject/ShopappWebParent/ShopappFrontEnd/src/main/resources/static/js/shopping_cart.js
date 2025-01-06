@@ -31,6 +31,7 @@ function removeProduct(link){
 		removeProductHTML(rowNumber)
 		updateTotal()
 		updateCountNumbers()
+		$("#yes-btn").hide()
 		showDialog("Shopping cart", response)
 	}).fail(function(){
 		showErrorModal("Error while removing product quantity")

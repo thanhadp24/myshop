@@ -1,7 +1,5 @@
 package com.shopapp.common.entity;
 
-import java.beans.Transient;
-
 import com.shopapp.common.entity.product.Product;
 
 import jakarta.persistence.Entity;
@@ -9,6 +7,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "cart_items")
@@ -24,6 +23,9 @@ public class CartItem extends IdBaseEntity{
 	private Product product;
 	
 	private int quantity;
+	
+	@Transient
+	private float shippingCost;
 	
 	public CartItem() {
 	}
@@ -61,6 +63,15 @@ public class CartItem extends IdBaseEntity{
 	@Transient
 	public float getSubTotal() {
 		return product.getDiscountPrice() * quantity;
+	}
+	
+	@Transient
+	public float getShippingCost() {
+		return shippingCost;
+	}
+	
+	public void setShippingCost(float shippingCost) {
+		this.shippingCost = shippingCost;
 	}
 	
 }

@@ -18,4 +18,6 @@ public interface SettingService {
 	public void saveAll(Iterable<Setting> settings);
 
 	List<Setting> getCurrencySettings();
+	
+	List<Setting> getPayments();
 }
