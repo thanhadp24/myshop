@@ -19,8 +19,13 @@ import com.shopapp.admin.repository.OrderRepository;
 import com.shopapp.admin.service.OrderService;
 import com.shopapp.common.entity.Country;
 import com.shopapp.common.entity.order.Order;
+import com.shopapp.common.entity.order.OrderTrack;
+import com.shopapp.common.enumm.OrderStatus;
+
+import jakarta.transaction.Transactional;
 
 @Service
+@Transactional
 public class OrderServiceImpl implements OrderService{
 
 	@Autowired
@@ -84,6 +89,29 @@ public class OrderServiceImpl implements OrderService{
 		}
 		orderRepository.deleteById(id);
 	}
+	
+	@Override
+	public void updateOrderStatus(Integer orderId, String status) {
+		Order orderInDb = orderRepository.findById(orderId).get();
+		OrderStatus statusToBeUpdated = OrderStatus.valueOf(status);
+		
+		if(!orderInDb.hasStatus(statusToBeUpdated)) {
+			List<OrderTrack> orderTracks = orderInDb.getOrderTracks();
+			
+			OrderTrack newTrack = new OrderTrack();
+			newTrack.setStatus(statusToBeUpdated);
+			newTrack.setUpdatedTime(new Date());
+			newTrack.setNotes(statusToBeUpdated.defaultDescription());
+			newTrack.setOrder(orderInDb);
+			
+			orderTracks.add(newTrack);
+			
+			orderInDb.setOrderStatus(statusToBeUpdated);
+			
+			orderRepository.save(orderInDb);
+		}
+	}
+	 
 	
 	@Override
 	public List<Country> getAllCountries() {

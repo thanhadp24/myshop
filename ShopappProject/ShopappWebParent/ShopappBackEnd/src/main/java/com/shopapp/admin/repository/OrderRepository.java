@@ -10,7 +10,9 @@ import com.shopapp.common.entity.order.Order;
 @Repository
 public interface OrderRepository extends SearchRepository<Order, Integer>{
 	
-	@Query("SELECT o FROM Order o WHERE o.firstName LIKE %:keyword% "
+	@Query("SELECT o FROM Order o WHERE CONCAT('#', o.id) LIKE %:keyword% "
+			+ "OR CONCAT(o.firstName, ' ', o.lastName) LIKE %:keyword% "
+			+ "OR o.firstName LIKE %:keyword% "
 			+ "OR o.lastName LIKE %:keyword% OR o.phoneNumber LIKE %:keyword% "
 			+ "OR o.addressLine1 LIKE %:keyword% OR o.addressLine2 LIKE %:keyword% "
 			+ "OR o.postalCode LIKE %:keyword% OR o.city LIKE %:keyword% "

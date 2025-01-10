@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.shopapp.admin.exception.OrderNotFoundException;
 import com.shopapp.admin.helper.PagingAndSortingHelper;
 import com.shopapp.admin.paging.PagingAndSortingParam;
+import com.shopapp.admin.security.ShopappUserDetails;
 import com.shopapp.admin.service.OrderService;
 import com.shopapp.admin.service.SettingService;
 import com.shopapp.common.entity.Setting;
@@ -46,10 +48,16 @@ public class OrderController {
 	@GetMapping("/orders/page/{pageNum}")
 	public String viewByPage(@PathVariable("pageNum") Integer pageNum, 
 			@PagingAndSortingParam(listName = "orders", moduleURL = "/orders") 
-			PagingAndSortingHelper helper, HttpServletRequest request) {
+			PagingAndSortingHelper helper, HttpServletRequest request,
+			@AuthenticationPrincipal ShopappUserDetails loggedUser) {
 		
 		orderService.getByPage(pageNum, helper);
 		loadCurrencySetting(request);
+		
+		if(!loggedUser.hasRole("Salesperson") && !loggedUser.hasRole("Admin") 
+				&& loggedUser.hasRole("Shipper")) {
+			return "orders/orders_shipper";
+		}
 		
 		return "orders/orders";
 	}
@@ -67,10 +75,19 @@ public class OrderController {
 	
 	@GetMapping("/orders/detail/{id}")
 	public String viewDetailOrder(@PathVariable("id") Integer id, Model model,
-			RedirectAttributes ra, HttpServletRequest request) {
+			RedirectAttributes ra, HttpServletRequest request,
+			@AuthenticationPrincipal ShopappUserDetails loggedUser) {
 		try {
-			model.addAttribute("order", orderService.get(id));
 			loadCurrencySetting(request);
+			boolean isVisibleForAdminOrSalesPerson = false;
+			
+			if(loggedUser.hasRole("Salesperson") || loggedUser.hasRole("Admin")) {
+				isVisibleForAdminOrSalesPerson = true;
+			}
+			
+			model.addAttribute("order", orderService.get(id));
+			model.addAttribute("isVisibleForAdminOrSalesPerson", isVisibleForAdminOrSalesPerson);
+
 			return "orders/order_detail_modal";
 		} catch (OrderNotFoundException e) {
 			ra.addFlashAttribute("message", e.getMessage());
