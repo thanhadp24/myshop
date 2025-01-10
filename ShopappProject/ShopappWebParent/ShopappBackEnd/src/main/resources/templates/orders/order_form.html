@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<head th:replace="fragments:: page_head(${pageTitle}, 'tag')" />
+	<link rel="stylesheet" th:href="@{/richtext/richtext.min.css}">	
+	<script th:src="@{/richtext/jquery.richtext.min.js}"></script>	
+</head>
+
+<body>
+	
+<div class="container-fluid">
+	<div th:replace="navigation:: navbar"></div>
+	<div>
+		<h2 class="text-primary">Manage Orders | [[${pageTitle}]]</h2>
+	</div>
+	
+	<form th:action="@{/orders/save}" method="post" th:object="${order}" 
+			onsubmit="return processFormBeforeSubmit();">
+		<input type="hidden" th:field=*{id}>
+		<ul class="nav nav-tabs" id="myTab" role="tablist">
+			<li class="nav-item">
+				<a class="nav-link active" data-toggle="tab" id="overview-tab"
+				href="#overview" role="tab">Overview</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" data-toggle="tab" id="products-tab"
+				href="#products" role="tab">Products</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" data-toggle="tab" id="shipping-tab"
+				href="#shipping" role="tab">Shipping</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" data-toggle="tab" id="track-tab"
+				href="#track" role="tab">Track</a>
+			</li>
+		</ul>
+
+		<div class="tab-content">
+			<div class="tab-pane active fade show p-3" id="overview" role="tabpanel">
+				<div th:replace="orders/order_form_overview::content"></div>
+			</div>
+			
+			<div class="tab-pane p-3" id="products" role="tabpanel">
+				<div th:replace="orders/order_product_form::content"></div>
+			</div>
+			
+			<div class="tab-pane p-3" id="shipping" role="tabpanel">
+				<div th:replace="orders/order_shipping_form::content"></div>
+			</div>
+				
+			<div class="tab-pane p-3" id="track" role="tabpanel">
+				<div th:replace="orders/order_track_form::content"></div>
+			</div>
+		</div>
+		<div class="text-center">
+			<input type="submit" class="btn btn-primary" value="Update" />
+			<button type="button" class="btn btn-danger" id="btn-cancel">Cancel</button>	
+		</div>
+	</form>
+	
+	<div th:replace="modal_fragments:: modal_dialog"></div>
+	<div th:replace="orders/add_product_modal:: content"></div>
+	
+	<div th:replace="fragments:: footer"></div>
+</div>
+
+<script>
+var dropdownCountry;
+var listStates;
+
+contextPath = "[[@{/}]]";
+csrfHeaderName = "[[${_csrf.headerName}]]";
+csrfValue = "[[${_csrf.token}]]";
+
+$(document).ready(function(){
+	dropdownCountry = $("#country");
+	listStates = $("#listStates");
+
+	dropdownCountry.on('change', function(){
+		showSuggestionStates();
+		$("#state").val("").focus();
+	});
+	showSuggestionStates();
+	
+	$("#btn-cancel").on("click", function(){
+		window.location.href = "[[@{/orders}]]";
+	})
+}); 
+
+function showSuggestionStates() {
+	countryId = $("#country option:selected").val();
+	url = "[[@{/states/countries/}]]" + countryId;
+	
+	$.get(url, function(response) {
+		listStates.empty();
+		$.each(response, function(idx, state){
+			$("<option>").val(state.name).text(state.name).appendTo(listStates);	
+		})
+	}).fail(function(e){
+		alert(e);
+	});
+}
+
+</script>
+<script th:src="@{/js/common_form.js}"></script>
+<script th:src="@{/js/jquery.number.min.js}"></script>
+<script th:src="@{/js/order_form_overview_product.js}"></script>
+<script th:src="@{/js/order_add_product_form.js}"></script>
+<script th:src="@{/js/order_remove_product_form.js}"></script>
+<script th:src="@{/js/order_form_track.js}"></script>
+</body>
+</html>

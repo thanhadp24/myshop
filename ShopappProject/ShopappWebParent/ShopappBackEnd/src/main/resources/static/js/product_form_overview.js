@@ -57,3 +57,4 @@ function checkUniqueProductName(form){
 		
 		return false;
 }
+

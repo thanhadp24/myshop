@@ -1,6 +1,7 @@
 package com.shopapp.admin.order;
 
 import java.util.Date;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import com.shopapp.admin.repository.OrderRepository;
 import com.shopapp.common.entity.Customer;
 import com.shopapp.common.entity.order.Order;
 import com.shopapp.common.entity.order.OrderDetail;
+import com.shopapp.common.entity.order.OrderTrack;
 import com.shopapp.common.entity.product.Product;
 import com.shopapp.common.enumm.OrderStatus;
 import com.shopapp.common.enumm.PaymentMethod;
@@ -65,5 +67,22 @@ public class TestOrder {
 		order.getOrderDetails().add(detail);
 		
 		orderRepository.save(order);
+	}
+	
+	@Test
+	public void testUpdateOrderTracks() {
+		Order order = orderRepository.findById(10).get();
+		
+		OrderTrack orderTrack = new OrderTrack();
+		orderTrack.setOrder(order);
+		orderTrack.setStatus(OrderStatus.REFUNDED);
+		orderTrack.setUpdatedTime(new Date());
+		orderTrack.setNotes(OrderStatus.REFUNDED.defaultDescription());
+		
+		List<OrderTrack> orderTracks = order.getOrderTracks();
+		orderTracks.add(orderTrack);
+		
+		Order updatedOrder = orderRepository.save(order);
+		System.out.println(updatedOrder.getPhoneNumber());
 	}
 }

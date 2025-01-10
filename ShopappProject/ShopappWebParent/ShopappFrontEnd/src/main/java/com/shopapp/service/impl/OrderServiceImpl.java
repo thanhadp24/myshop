@@ -13,6 +13,7 @@ import com.shopapp.common.entity.CartItem;
 import com.shopapp.common.entity.Customer;
 import com.shopapp.common.entity.order.Order;
 import com.shopapp.common.entity.order.OrderDetail;
+import com.shopapp.common.entity.order.OrderTrack;
 import com.shopapp.common.entity.product.Product;
 import com.shopapp.common.enumm.OrderStatus;
 import com.shopapp.common.enumm.PaymentMethod;
@@ -32,6 +33,7 @@ public class OrderServiceImpl implements OrderService{
 	public Order createOrder(Customer customer, Address address, List<CartItem> cartItems, 
 			PaymentMethod paymentMethod, CheckoutInfo checkoutInfo) {
 		Order newOrder = new Order();
+		
 		newOrder.setOrderTime(new Date());
 		newOrder.setCustomer(customer);
 		newOrder.setProductCost(checkoutInfo.getProductCost());
@@ -41,7 +43,7 @@ public class OrderServiceImpl implements OrderService{
 		newOrder.setTotal(checkoutInfo.getPaymentTotal());
 		newOrder.setDeliverDays(checkoutInfo.getDeliverDays());
 		newOrder.setDeliverDate(checkoutInfo.getDeliverDate());
-		
+
 		if(paymentMethod.equals(PaymentMethod.PAYPAL)) {
 			newOrder.setOrderStatus(OrderStatus.PAID);
 		}else {
@@ -70,6 +72,13 @@ public class OrderServiceImpl implements OrderService{
 			
 			orderDetails.add(orderDetail);
 		}
+		OrderTrack orderTrack = new OrderTrack();
+		orderTrack.setUpdatedTime(new Date());
+		orderTrack.setOrder(newOrder);
+		orderTrack.setStatus(OrderStatus.NEW);
+		orderTrack.setNotes(OrderStatus.NEW.defaultDescription());
+		
+		newOrder.setOrderTracks(List.of(orderTrack));
 		
 		return orderRepository.save(newOrder);
 	}

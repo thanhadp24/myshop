@@ -15,4 +15,6 @@ public class Common {
 	public static final Integer SHIPPING_RATES_PER_PAGE = 5;
 
 	public static final Integer ORDERS_PER_PAGE = 5;
+	
+	public static final Integer DIM_DIVISOR = 139;
 }

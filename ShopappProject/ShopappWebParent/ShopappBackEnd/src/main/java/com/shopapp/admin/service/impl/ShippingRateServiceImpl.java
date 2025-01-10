@@ -12,10 +12,12 @@ import com.shopapp.admin.exception.ShippingRateAlreadyExistsException;
 import com.shopapp.admin.exception.ShippingRateNotFoundException;
 import com.shopapp.admin.helper.PagingAndSortingHelper;
 import com.shopapp.admin.repository.CountryRepository;
+import com.shopapp.admin.repository.ProductRepository;
 import com.shopapp.admin.repository.ShippingRateRepository;
 import com.shopapp.admin.service.ShippingRateService;
 import com.shopapp.common.entity.Country;
 import com.shopapp.common.entity.ShippingRate;
+import com.shopapp.common.entity.product.Product;
 
 @Service
 @Transactional
@@ -23,6 +25,9 @@ public class ShippingRateServiceImpl implements ShippingRateService {
 
 	@Autowired
 	private ShippingRateRepository rateRepository;
+	
+	@Autowired
+	private ProductRepository productRepository;
 	
 	@Autowired
 	private CountryRepository countryRepository;
@@ -79,8 +84,25 @@ public class ShippingRateServiceImpl implements ShippingRateService {
 	}
 	
 	@Override
+	public float calculateShippingCost(Integer productId, Integer countryId, String state) 
+			throws ShippingRateNotFoundException {
+		ShippingRate shippingRate = rateRepository.findByCountryAndState(countryId, state);
+		
+		if(shippingRate == null) {
+			throw new ShippingRateNotFoundException("No shipping rate found for the given destination."
+					+ "You have to enter shipping cost manually.");
+		}
+		Product product = productRepository.findById(productId).get();
+		
+		float dimWeight = (product.getLength() * product.getWidth() * product.getHeight()) / Common.DIM_DIVISOR;
+		float finalWeight = product.getWeight() > dimWeight ? product.getWeight():dimWeight;
+		
+		return finalWeight * shippingRate.getRate();
+	}
+	
+	@Override
 	public List<Country> getAllCountries() {
 		return countryRepository.findAllByOrderByNameAsc();
 	}
-
+	
 }

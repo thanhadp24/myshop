@@ -1,5 +1,8 @@
 package com.shopapp.common.entity.order;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.shopapp.common.entity.IdBaseEntity;
@@ -13,6 +16,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "order_track")
@@ -67,4 +71,19 @@ public class OrderTrack extends IdBaseEntity{
 		this.order = order;
 	}
 	
+	@Transient
+	public String getUpdatedTimeOnForm() {
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		return df.format(this.updatedTime);
+	}
+	
+	public void setUpdatedTimeOnForm(String dateString) {
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		
+		try {
+			this.updatedTime = df.parse(dateString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
 }

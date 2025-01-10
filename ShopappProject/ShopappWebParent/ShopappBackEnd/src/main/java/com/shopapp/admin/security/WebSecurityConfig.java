@@ -47,7 +47,8 @@ public class WebSecurityConfig {
 				.requestMatchers("/products/**").hasAnyAuthority("Admin", "Editor")
 				
 				.requestMatchers("/questions/**", "/reviews/**").hasAnyAuthority("Admin", "Assistant")
-				.requestMatchers("/customers/**", "/shipping/**", "/reports/**").hasAnyAuthority("Admin", "Salesperson")
+				.requestMatchers("/customers/**", "/shipping/**", 
+						"/reports/**", "get_shipping_cost").hasAnyAuthority("Admin", "Salesperson")
 				.requestMatchers("/orders/**").hasAnyAuthority("Admin", "Salesperson", "Shipper")
 				.requestMatchers("/articles/**", "/menu/**").hasAnyAuthority("Admin", "Editor")
 				.anyRequest()
@@ -62,6 +63,7 @@ public class WebSecurityConfig {
 				.tokenValiditySeconds(7 * 24 * 60 * 60) // reopen web brower it's always login automatically
 				);
 
+		http.headers(header -> header.frameOptions(fo -> fo.sameOrigin()));
 		return http.build();
 	}
 

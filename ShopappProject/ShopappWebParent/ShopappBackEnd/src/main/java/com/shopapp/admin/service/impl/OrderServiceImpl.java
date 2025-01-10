@@ -1,5 +1,7 @@
 package com.shopapp.admin.service.impl;
 
+import java.util.Date;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +14,10 @@ import org.springframework.stereotype.Service;
 import com.shopapp.admin.common.Common;
 import com.shopapp.admin.exception.OrderNotFoundException;
 import com.shopapp.admin.helper.PagingAndSortingHelper;
+import com.shopapp.admin.repository.CountryRepository;
 import com.shopapp.admin.repository.OrderRepository;
 import com.shopapp.admin.service.OrderService;
+import com.shopapp.common.entity.Country;
 import com.shopapp.common.entity.order.Order;
 
 @Service
@@ -21,6 +25,9 @@ public class OrderServiceImpl implements OrderService{
 
 	@Autowired
 	private OrderRepository orderRepository;
+	
+	@Autowired
+	private CountryRepository countryRepository;
 	
 	@Override
 	public void getByPage(int pageNum, PagingAndSortingHelper helper) {
@@ -50,6 +57,17 @@ public class OrderServiceImpl implements OrderService{
 	}
 	
 	@Override
+	public void save(Order orderInForm) {
+		Order orderInDb = orderRepository.findById(orderInForm.getId()).get();
+		
+		orderInForm.setOrderTime(new Date());
+		orderInForm.setCustomer(orderInDb.getCustomer());
+		orderInForm.setDeliverDate(orderInDb.getDeliverDate());
+		
+		orderRepository.save(orderInForm);
+	}
+	
+	@Override
 	public Order get(Integer id) throws OrderNotFoundException {
 		 try {
 			 return orderRepository.findById(id).get();
@@ -65,5 +83,10 @@ public class OrderServiceImpl implements OrderService{
 			throw new OrderNotFoundException("Could not find any order with id: " + id);
 		}
 		orderRepository.deleteById(id);
+	}
+	
+	@Override
+	public List<Country> getAllCountries() {
+		return countryRepository.findAllByOrderByNameAsc();
 	}
 }

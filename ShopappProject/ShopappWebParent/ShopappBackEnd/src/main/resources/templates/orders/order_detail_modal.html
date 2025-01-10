@@ -97,7 +97,7 @@
 						</div>
 						<div>
 							Product Cost: 
-							<div th:replace="fragments:: format_currency(${order.productCost})"></div>
+							<div th:replace="fragments:: format_currency(${detail.productCost})"></div>
 						</div>
 						<div>
 							Subtotal: [[${detail.quantity}]] X
@@ -183,8 +183,36 @@
 			</div>
 		</div>
 			
-		<div class="tab-pane" id="track" role="tabpanel">
-			
+		<div class="tab-pane p-3" id="track" role="tabpanel">
+			<div class="full-details">
+			<table class="table table-striped table-bordered">
+				<thead>
+					<tr>
+						<th>Time</th>
+						<th>Status</th>
+						<th>Notes</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="track: ${order.orderTracks}">
+						<td>[[${#dates.format(track.updatedTime, 'yyyy-MM-dd HH:mm:ss')}]]</td>
+						<td>[[${track.status}]]</td>
+						<td><i>[[${track.notes}]]</i></td>
+					</tr>	
+				</tbody>
+			</table>
+			</div>
+		
+			<div class="less-details">
+				<th:block th:each="track: ${order.orderTracks}">
+					<div class="row pl-3">
+						<span><td>[[${#dates.format(track.updatedTime, 'yyyy-MM-dd HH:mm:ss')}]]</td></span>
+					</div>
+					<div class="row pl-3">
+						<span>&nbsp;&nbsp;<b>[[${track.status}]]</b>:<i>[[${track.notes}]]</i></span>
+					</div>
+				</th:block>
+			</div>
 		</div>
 	</div>
 </div>

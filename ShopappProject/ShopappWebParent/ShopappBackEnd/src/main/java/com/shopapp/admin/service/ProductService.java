@@ -19,4 +19,6 @@ public interface ProductService {
 	
 	void updateEnabled(Integer id, boolean status);
 
+	void searchProducts(int pageNum, PagingAndSortingHelper helper);
+
 }

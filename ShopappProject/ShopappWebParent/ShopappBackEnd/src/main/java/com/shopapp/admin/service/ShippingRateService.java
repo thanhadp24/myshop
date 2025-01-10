@@ -21,4 +21,6 @@ public interface ShippingRateService {
 	void updateCodSupported(Integer id, boolean enabled) throws ShippingRateNotFoundException;
 	
 	List<Country> getAllCountries();
+
+	float calculateShippingCost(Integer productId, Integer countryId, String state) throws ShippingRateNotFoundException;
 }

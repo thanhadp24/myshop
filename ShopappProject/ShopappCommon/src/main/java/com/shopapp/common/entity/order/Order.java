@@ -1,8 +1,12 @@
 package com.shopapp.common.entity.order;
 
-import java.beans.Transient;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.shopapp.common.entity.AbstractAddress;
@@ -20,7 +24,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "orders")
@@ -51,7 +57,7 @@ public class Order extends AbstractAddress{
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
 	
-	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<OrderDetail> orderDetails = new HashSet<>();
 	
 	@Enumerated(EnumType.STRING)
@@ -60,8 +66,9 @@ public class Order extends AbstractAddress{
 	@Enumerated(EnumType.STRING)
 	private OrderStatus orderStatus;
 	
-	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-	private Set<OrderTrack> orderTracks = new HashSet<>();
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderBy(value = "updatedTime ASC")
+	private List<OrderTrack> orderTracks = new ArrayList<>();
 	
 	public Order() {
 	}
@@ -170,12 +177,27 @@ public class Order extends AbstractAddress{
 		this.orderStatus = orderStatus;
 	}
 	
-	public Set<OrderTrack> getOrderTracks() {
+	public List<OrderTrack> getOrderTracks() {
 		return orderTracks;
 	}
 	
-	public void setOrderTracks(Set<OrderTrack> orderTracks) {
+	public void setOrderTracks(List<OrderTrack> orderTracks) {
 		this.orderTracks = orderTracks;
+	}
+	
+	@Transient
+	public String getDeliverDateOnForm() {
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		return df.format(deliverDate);
+	}
+	
+	public void setDeliverDateOnForm(String dateString) {
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			this.deliverDate = df.parse(dateString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Transient
