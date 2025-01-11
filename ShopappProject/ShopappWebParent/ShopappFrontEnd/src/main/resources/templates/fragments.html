@@ -16,6 +16,18 @@
 </head>
 <body>
 
+<th th:fragment="column_link(fieldName, columnLabel, removeTag)" th:remove="${removeTag}">
+	<a class="text-dark"
+		th:href="@{${moduleURL} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName} + '&sortDir='
+			+ ${sortField != fieldName ? sortDir : reverseSortDir}
+			 + ${keyword != null ? '&keyword='+keyword:''} + ${categoryId != null ? '&categoryId='+categoryId:''}}">
+		[[${columnLabel}]]
+	</a> 
+	
+	<span th:if="${sortField == fieldName}"
+	th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span>
+</th>
+
 <a th:fragment="page_link(moduleURL, pageNum, label)" 
 	class="page-link" 
 	th:href="@{${moduleURL} + '/page/' + ${pageNum} + ${keyword != null ? '?keyword='+keyword:''}}">
@@ -76,11 +88,22 @@
 		</div>
 	</div>
 </div>
+
 <div th:fragment="format_currency(amount)" th:remove="tag">
 	<span th:if="${CURRENCY_SYMBOL_POSITION} == 'before price'" th:remove="tag">[[${CURRENCY_SYMBOL}]]</span> 
 	[[${#numbers.formatDecimal(amount, 1, THOUSANDS_POINT_TYPE, DECIMAL_DIGITS, DECIMAL_POINT_TYPE)}]]
 	<span th:if="${CURRENCY_SYMBOL_POSITION} == 'after price'" th:remove="tag">[[${CURRENCY_SYMBOL}]]</span>
 </div>
 
+<div th:fragment="currency_input(amount)" th:remove="tag">
+	<input type="text" readonly class="form-control"
+	th:value="${(CURRENCY_SYMBOL_POSITION == 'before price' ? CURRENCY_SYMBOL: '') 
+	+ #numbers.formatDecimal(amount, 1, THOUSANDS_POINT_TYPE, DECIMAL_DIGITS, DECIMAL_POINT_TYPE)
+	+ (CURRENCY_SYMBOL_POSITION == 'after price' ? CURRENCY_SYMBOL: '')}">
+</div>
+
+<div th:fragment="format_time(datetime)" th:remove="tag">
+	<span th:text="${#dates.format(datetime, 'yyyy-MM-dd HH:mm:ss')}"></span>
+</div>
 </body>
 </html>

@@ -2,10 +2,10 @@ package com.shopapp.admin.service;
 
 import java.util.List;
 
-import com.shopapp.admin.exception.OrderNotFoundException;
 import com.shopapp.admin.helper.PagingAndSortingHelper;
 import com.shopapp.common.entity.Country;
 import com.shopapp.common.entity.order.Order;
+import com.shopapp.common.exception.OrderNotFoundException;
 
 public interface OrderService {
 
@@ -13,7 +13,7 @@ public interface OrderService {
 	
 	Order get(Integer id) throws OrderNotFoundException;
 	
-	void delete(Integer id) throws OrderNotFoundException;
+	void delete(Integer id) throws OrderNotFoundException, com.shopapp.common.exception.OrderNotFoundException;
 	
 	List<Country> getAllCountries();
 

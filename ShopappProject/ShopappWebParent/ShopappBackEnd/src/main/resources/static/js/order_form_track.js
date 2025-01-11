@@ -38,6 +38,7 @@ function updateTrackCountNumbers(){
 function addNewTrackRecord(){
 	html = generatedTrackCode()
 	$("#trackList").append(html)
+	updateTrackCountNumbers()
 }
 
 function generatedTrackCode(){

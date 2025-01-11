@@ -302,6 +302,16 @@ public class Order extends AbstractAddress{
 		return hasStatus(OrderStatus.RETURNED);
 	}
 	
+	@Transient
+	public boolean isProcessing() {
+		return hasStatus(OrderStatus.PROCCESSING);
+	}
+	
+	@Transient
+	public boolean isReturnRequested() {
+		return hasStatus(OrderStatus.RETURN_REQUESTED);
+	}
+	
 	public boolean hasStatus(OrderStatus status) {
 		for(OrderTrack track: orderTracks) {
 			if(track.getStatus().equals(status)) {
@@ -309,5 +319,20 @@ public class Order extends AbstractAddress{
 			}
 		}
 		return false;
+	}
+	
+	@Transient
+	public String getProductNames() {
+		StringBuilder productNames = new StringBuilder("");
+		productNames.append("<ul>");
+		
+		for(OrderDetail detail: orderDetails) {
+			String productName = detail.getProduct().getShortName();
+			productNames.append("<li>" + productName + "</li>");
+		}
+		
+		productNames.append("</ul>");
+		
+		return productNames.toString();
 	}
 }
