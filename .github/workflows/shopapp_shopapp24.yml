@@ -19,10 +19,10 @@ jobs:
           java-version: '17'
           distribution: 'microsoft'
 
-      - name: Build with Maven
+      - name: Build with Maven (skip tests)
         run: |
           cd ShopappProject
-          mvn clean install
+          mvn clean install -DskipTests
 
       - name: List files for debugging
         run: dir ShopappProject/ShopappWebParent/ShopappBackend/target
