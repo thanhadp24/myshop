@@ -20,16 +20,18 @@ jobs:
           distribution: 'microsoft'
 
       - name: Build with Maven
-        run: mvn clean install
+        run: |
+          cd ShopappProject
+          mvn clean install
 
       - name: List files for debugging
-        run: dir ShopappWebParent/ShopappBackend/target
+        run: dir ShopappProject/ShopappWebParent/ShopappBackend/target
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: ShopappProject
-          path: ShopappWebParent/ShopappBackend/target/*.war
+          path: ShopappProject/ShopappWebParent/ShopappBackend/target/*.war
 
   deploy:
     runs-on: windows-latest
@@ -59,4 +61,4 @@ jobs:
         with:
           app-name: 'shopapp24'
           slot-name: 'Production'
-          package: 'ShopappWebParent/ShopappBackend/target/*.war'
+          package: 'ShopappProject/ShopappWebParent/ShopappBackend/target/*.war'
