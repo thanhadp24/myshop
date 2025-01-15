@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy JAR app to Azure Web App - shopapp24
+name: Build and deploy WAR app to Azure Web App - shopapp24
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
+          path: '${{ github.workspace }}/target/*.war'
 
   deploy:
     runs-on: windows-latest
@@ -49,9 +49,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_56251F1C32114944A2DE2DEDD2128BB1 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_0C93C1E606364D3ABAA4D9414DF31DD1 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_F3898BB525554A5293B7F18C29F8FB36 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_D72A62940A2F403F899607E7B47C718F }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_EF1074FD744A4777AFA1B5ED97B90311 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CDB3503886274C25B6FAB80D9BD4E5B2 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -59,5 +59,5 @@ jobs:
         with:
           app-name: 'shopapp24'
           slot-name: 'Production'
-          package: '*.jar'
+          package: '*.war'
           
