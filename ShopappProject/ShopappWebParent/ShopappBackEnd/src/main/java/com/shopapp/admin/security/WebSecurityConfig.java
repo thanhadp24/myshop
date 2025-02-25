@@ -1,0 +1,85 @@
+package com.shopapp.admin.security;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+public class WebSecurityConfig {
+
+	
+	@Bean
+	UserDetailsService userDetailsService() {
+		return new ShopappUserDetailService();
+	}
+	
+	@Bean
+	DaoAuthenticationProvider authenticationProvider() {
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+		provider.setUserDetailsService(userDetailsService());
+		provider.setPasswordEncoder(passwordEncoder());
+		
+		return provider;
+	}
+	
+	@Bean
+	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.authenticationProvider(authenticationProvider());
+		
+		http.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/states/countries/**").hasAnyAuthority("Admin", "Salesperson")
+				.requestMatchers("/users/**", "/setting/**", "/countries/**", "/states/**").hasAuthority("Admin")
+				.requestMatchers("/categories/**", "/brands/**").hasAnyAuthority("Admin","Editor")
+					
+				.requestMatchers("/products/delete/**", "/products/new/**")
+					.hasAnyAuthority("Admin", "Editor")
+				.requestMatchers("/products/edit/**", "/products/save/**", "/products/check_unique")
+					.hasAnyAuthority("Admin", "Editor", "Salesperson")
+				.requestMatchers("/products", "/products/", "/products/detail/**", "/products/page/**")
+					.hasAnyAuthority("Admin", "Editor", "Salesperson", "Shipper")
+				.requestMatchers("/products/**").hasAnyAuthority("Admin", "Editor")
+				
+				.requestMatchers("/questions/**", "/reviews/**").hasAnyAuthority("Admin", "Assistant")
+				
+				.requestMatchers("/orders", "/orders/", "/orders/page/**", "/orders/detail/**")
+					.hasAnyAuthority("Admin", "Salesperson", "Shipper")
+				
+				.requestMatchers("/customers/**", "/shipping/**", "/orders/**",
+						"/reports/**", "get_shipping_cost", "/reports/**").hasAnyAuthority("Admin", "Salesperson")
+				
+				.requestMatchers("/articles/**", "/menu/**").hasAnyAuthority("Admin", "Editor")
+				
+				.requestMatchers("/orders_shipper/update/**").hasAnyAuthority("Shipper")
+				
+				.anyRequest()
+				.authenticated())
+		.formLogin(login -> login
+					.loginPage("/login")
+					.usernameParameter("email")
+					.permitAll())
+		.logout(logout -> logout.permitAll())
+		.rememberMe(rem -> rem	   		// default remember-me: only login automatically when reopen brower
+				.key("AbcDefgHijKlmnOpqrs_1234567890")  // hash-based token implement: allow restart app or
+				.tokenValiditySeconds(7 * 24 * 60 * 60) // reopen web brower it's always login automatically
+				);
+
+		http.headers(header -> header.frameOptions(fo -> fo.sameOrigin()));
+		return http.build();
+	}
+
+	@Bean
+	WebSecurityCustomizer webSecurityCustomizer() {
+		return (web) -> web.ignoring().requestMatchers("/images/**", "/js/**", "/css/**", "/webjars/**", "/richtext/**");
+	}
+
+	@Bean
+	PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments:: page_head('Brands Manager', 'none')">
+</head>
+<body>
+
+	<div class="container-fluid">
+		<div th:replace="navigation:: navbar"></div>
+
+		<div>
+			<h2 class="text-primary">Manage Brands</h2>
+			<a th:href="@{/brands/new}" class="fa-solid fa-folder-plus fa-lg icon-gray"></a>&nbsp;&nbsp;
+		</div>
+
+		<div th:replace="fragments:: message"></div>
+		
+		<div th:replace="fragments:: search"></div>
+		
+		<div class="full-details">
+			<table class="table table-responsive-xl table-bordered table-hover table-striped">
+				<thead>
+					<tr>
+						<th class="hidable-column">Brand ID</th>
+						<th class="text-center">Logo</th>
+						<th th:replace="fragments:: column_link('name', 'Brand Name', 'none')"></th>
+						<th>Categories</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="brand: ${brands}">
+						<td class="hidable-column">[[${brand.id}]]</td>
+						<td class="text-center">
+							<img th:src="@{${brand.logoPath}}" width="100px" class="img-fluid">
+						</td>
+						<td>[[${brand.name}]]</td>
+						<td>
+							<span class="badge badge-secondary p-1" style="margin-right: 5px;" 
+							th:each="cate: ${brand.categories}">[[${cate.name}]]</span>
+						</td>
+						<td>
+							<div th:replace="fragments:: entity_edit('/brands/edit/' + ${brand.id}, 'brand')"></div>
+							<div th:replace="fragments:: entity_delete('/brands/delete/' + ${brand.id}, 'brand', ${brand.id}, true)"></div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="less-details">
+			<div class="row m-1" th:each="brand: ${brands}">
+				<div class="col-3">
+					<span th:if="${brand.logo == null}"
+						class="fa-solid fa-user-tie fa-xl icon-gray">
+					</span> 
+					<img th:if="${brand.logo != null}" style="width: 100%"
+						th:src="@{${brand.logoPath}}"  />
+				</div>
+				<div class="col-9">
+					<p class="mb-1">[[${brand.name}]]</p>
+					<p class="mb-1">[[${brand.categories}]]</p>
+					<p>
+						<a th:replace="fragments:: entity_edit('/brands/edit/' + ${brand.id}, 'brand')"></a> 
+						&nbsp;
+						<a th:replace="fragments:: entity_delete('/brands/delete/' 
+							+ ${brand.id}, 'brand', ${brand.id}, true)"></a>
+					</p>
+				</div>	
+			</div>
+		</div>
+
+		<div th:replace="fragments:: pagination('brands')"></div>
+
+		<div th:replace="modal_fragments:: modal_confirm"></div>
+
+
+		<div th:replace="fragments:: footer"></div>
+	</div>
+
+	<script th:src="@{/js/common_link.js}"></script>
+	<script>
+		moduleURL = "[[@{/brands}]]";
+		$(document).ready(function() {
+			$(".link-delete").on('click', function(e){
+				e.preventDefault();
+				confirmDeleteModal($(this), 'brand');
+			})
+		})
+	</script>
+</body>
+</html>

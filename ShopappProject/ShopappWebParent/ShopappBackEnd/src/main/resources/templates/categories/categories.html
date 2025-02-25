@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments:: page_head('Categories Manager', 'none')">
+</head>
+<body>
+
+	<div class="container-fluid">
+		<div th:replace="navigation:: navbar"></div>
+
+		<div>
+			<h2 class="text-primary">Manage Categories</h2>
+			<a th:href="@{/categories/new}" class="fa-solid fa-folder-plus fa-lg icon-gray"></a>&nbsp;&nbsp;
+			<a th:href="@{/categories/export/csv}" class="fa-solid fa-file-csv fa-lg icon-gray"></a>
+		</div>
+	
+		<div th:replace="fragments:: message"></div>
+		<div th:replace="fragments:: search"></div>
+		
+		<div class="full-details">
+			<table class="table table-responsive-xl table-bordered table-hover table-striped">
+				<thead>
+					<tr>
+						<th class="text-center">ID</th>
+						<th>Category Image</th>
+						<th th:replace="fragments:: column_link('name', 'Category Name', 'none')"></th>
+						<th class="hidable-column">Alias</th>
+						<th>Enabled</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="category: ${categories}">
+						<td class="text-center">[[${category.id}]]</td>
+						<td>
+							<img th:src="@{${category.imagePath}}" width="100px" class="img-fluid">
+						</td>
+						<td>[[${category.name}]]</td>
+						<td class="hidable-column">[[${category.alias}]]</td>
+						<td>
+							<a th:replace="fragments:: entity_status(${category.enabled}, '/categories/' + ${category.id}, 'category')"></a>
+						</td>
+						<td>
+							<div th:replace="fragments:: entity_edit('/categories/edit/' + ${category.id}, 'category')"></div>
+							<div th:replace="fragments:: entity_delete('/categories/delete/' 
+							+ ${category.id}, 'category', ${category.id}, ${!category.hasChildren})"></div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="less-details">
+			<div class="row m-1" th:each="category: ${categories}">
+				<div class="col-4">
+					<img th:src="@{${category.imagePath}}" width="100px" class="img-fluid">
+				</div>
+				<div class="col-8">
+					<div>[[${category.name}]]</div>
+					<div class="mt-2">
+						<a th:replace="fragments:: entity_status(${category.enabled}, '/categories/' + ${category.id}, 'category')"></a>
+						&nbsp;
+						<a th:replace="fragments:: entity_edit('/categories/edit/' + ${category.id}, 'category')"></a>
+						<a th:replace="fragments:: entity_delete('/categories/delete/' 
+							+ ${category.id}, 'category', ${category.id}, ${!category.hasChildren})"></a>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div th:replace="fragments:: pagination('categories')"></div>
+ 
+		<div th:replace="modal_fragments:: modal_confirm"></div>
+
+		<div th:replace="fragments:: footer"></div>
+	</div>
+
+	<script th:src="@{/js/common_link.js}"></script>
+	<script>
+		moduleURL = "[[@{/categories}]]";
+		$(document).ready(function() {
+			$(".link-delete").on('click', function(e){
+				e.preventDefault();
+				confirmDeleteModal($(this), 'category');
+			})
+		})
+	</script>
+
+</body>
+</html>

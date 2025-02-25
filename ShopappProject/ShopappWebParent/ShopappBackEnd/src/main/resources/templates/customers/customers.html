@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments:: page_head('Customers Manager', 'none')">
+</head>
+<body>
+
+	<div class="container-fluid">
+		<div th:replace="navigation:: navbar"></div>
+
+		<div>
+			<h2 class="text-primary">Manage customers</h2>
+			<a th:href="@{/customers/export/csv}" class="fa-solid fa-file-csv fa-lg icon-gray"></a>
+		</div>
+
+		<div th:replace="fragments:: message"></div>
+		
+		<div th:replace="fragments:: search"></div>
+		
+		<div class="full-details">
+			<table class="table table-responsive-xl table-bordered table-hover table-striped">
+				<thead>
+					<tr>
+						<th class="hidable-column">
+							<th th:replace="fragments:: column_link('id', 'ID', 'tag')"></th>
+						</th>
+						<th class="hidable-column">
+							<th th:replace="fragments:: column_link('firstName', 'First Name', 'tag')"></th>
+						</th> 
+						<th th:replace="fragments:: column_link('lastName', 'Last Name', 'none')"></th>
+						<th th:replace="fragments:: column_link('email', 'Email', 'none')"></th>
+						<th class="hidable-column">
+							<th th:replace="fragments:: column_link('city', 'City', 'tag')"></th>
+						</th>
+						<th class="hidable-column">
+							<th th:replace="fragments:: column_link('state', 'State', 'tag')"></th>
+						</th>
+						<th th:replace="fragments:: column_link('country', 'Country', 'none')"></th>
+						<th th:replace="fragments:: column_link('enabled', 'Enabled', 'none')"></th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="customer: ${customers}">
+						<td>[[${customer.id}]]</td>
+						<td>[[${customer.firstName}]]</td>
+						<td>[[${customer.lastName}]]</td>
+						<td class="hidable-column">[[${customer.email}]]</td>
+						<td class="hidable-column">[[${customer.city}]]</td>
+						<td class="hidable-column">[[${customer.state}]]</td>
+						<td>[[${customer.country.name}]]</td>
+						<td>
+							<a th:replace="fragments:: entity_status(${customer.enabled}, '/customers/' + ${customer.id}, 'customer')"></a>
+						</td>
+						
+						<td>
+							<a class="fa-regular fa-file fa-lg icon-green link-detail" 
+								th:href="@{'/customers/detail/' + ${customer.id}}"
+								title="View detail of this customer"></a> &nbsp;
+							<div th:replace="fragments:: entity_edit('/customers/edit/' + ${customer.id}, 'customer')"></div>
+							<div th:replace="fragments:: entity_delete('/customers/delete/' + ${customer.id}, 'customer', ${customer.id}, true)"></div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="less-details">
+			<div class="row m-1" th:each="customer: ${customers}">
+				<div class="col-3">
+					<span>[[${customer.fullName}]]</span>
+				</div>
+				<div class="col-9">
+					<p class="mb-1">[[${customer.country.name}]]</p>
+					<p>
+						<a class="fa-regular fa-file fa-lg icon-green link-detail" 
+							th:href="@{'/customers/detail/' + ${customer.id}}"
+							title="View detail of this customer"></a> &nbsp;
+						<div th:replace="fragments:: entity_edit('/customers/edit/' + ${customer.id}, 'customer')"></div>
+						<div th:replace="fragments:: entity_delete('/customers/delete/' 
+						+ ${customer.id}, 'customer', ${customer.id}, true)"></div>
+					</p>
+				</div>	
+			</div>
+		</div>
+
+		<div th:replace="fragments:: pagination('customers')"></div>
+
+		<div th:replace="modal_fragments:: modal_confirm"></div>
+		
+		<div class="modal" id="detailModal">
+			<div class="modal-dialog modal-xl">
+			 	<div class="modal-content ">
+			 	</div>
+			</div>
+		</div>
+
+		<div th:replace="fragments:: footer"></div>
+	</div>
+
+	
+	<script>
+		moduleURL = "[[@{/customers}]]";
+		$(document).ready(function() {
+			$(".link-delete").on('click', function(e){
+				e.preventDefault();
+				confirmDeleteModal($(this), 'customer');
+			})
+			
+			$(".link-detail").on("click", function(e){
+				e.preventDefault();
+				linkDetailURL = $(this).attr("href");
+				$("#detailModal").modal("show").find(".modal-content").load(linkDetailURL);
+			});
+			
+		})
+	</script>
+	<script th:src="@{/js/common_link.js}"></script>
+</body>
+</html>

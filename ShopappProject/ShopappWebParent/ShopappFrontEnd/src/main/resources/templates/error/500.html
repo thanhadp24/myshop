@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments:: page_head('Error page', 'none')">
+</head>
+<body>
+	<div class="container-fluid">
+	<div th:replace="navigation:: header_navbar"></div>
+	
+	<div class="m-3">
+		<h2>Sorry, The server has encountered an error while processing your request!!!!!!</h2>
+	</div>
+	
+	<div th:replace="navigation:: footer_navbar"></div>
+</div>
+</body>
+</html>

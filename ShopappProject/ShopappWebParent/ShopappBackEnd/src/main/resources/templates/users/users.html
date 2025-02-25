@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments:: page_head('Users Manager', 'none')">
+</head>
+<body>
+
+	<div class="container-fluid">
+		<div th:replace="navigation:: navbar"></div>
+
+		<div>
+			<h2 class="text-primary">Manage users</h2>
+			<a th:href="@{/users/new}" class="fa-solid fa-user-plus fa-lg icon-gray"></a>&nbsp;&nbsp;
+			<a th:href="@{/users/export/csv}" class="fa-solid fa-file-csv fa-lg icon-gray"></a>
+			&nbsp;&nbsp;
+			<a th:href="@{/users/export/excel}" class="fa-solid fa-file-excel fa-lg icon-gray"></a>
+			&nbsp;&nbsp;
+			<a th:href="@{/users/export/pdf}" class="fa-regular fa-file-pdf fa-lg icon-gray"></a>
+		</div>
+
+		<div th:replace="fragments:: message"></div>
+		
+		<div th:replace="fragments:: search"></div>
+		
+		<div class="full-details">
+			<table class="table table-responsive-xl table-bordered table-hover table-striped">
+				<thead>
+					<tr>
+						<th class="hidable-column">
+							<th th:replace="fragments:: column_link('id', 'User ID', 'tag')"></th>
+						</th>
+						<th class="text-center">Photos</th>
+						<th class="hidable-column">
+							<th th:replace="fragments:: column_link('email', 'Email', 'tag')"></th>
+						</th> 
+						<th th:replace="fragments:: column_link('firstName', 'First Name', 'none')"></th>
+						<th th:replace="fragments:: column_link('lastName', 'Last Name', 'none')"></th>
+						<th>Roles</th>
+						<th th:replace="fragments:: column_link('enabled', 'Enabled', 'none')"></th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="user: ${users}">
+						<td class="hidable-column">[[${user.id}]]</td>
+						<td class="text-center">
+							<span th:if="${user.photos == null}"
+								class="fa-solid fa-user-tie fa-xl icon-gray"></span> 
+							<img th:if="${user.photos != null}"
+							th:src="@{${user.getPhotoImagePath}}" style="width: 50px" />
+						</td>
+						<td class="hidable-column">[[${user.email}]]</td>
+						<td>[[${user.firstName}]]</td>
+						<td>[[${user.lastName}]]</td>
+						<td>[[${user.roles}]]</td>
+						<td>
+							<a th:replace="fragments:: entity_status(${user.enabled}, '/users/' + ${user.id}, 'user')"></a>
+						</td>
+						
+						<td>
+							<div th:replace="fragments:: entity_edit('/users/edit/' + ${user.id}, 'user')"></div>
+							<div th:replace="fragments:: entity_delete('/users/delete/' + ${user.id}, 'user', ${user.id}, true)"></div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="less-details">
+			<div class="row m-1" th:each="user: ${users}">
+				<div class="col-3">
+					<span th:if="${user.photos == null}"
+						class="fa-solid fa-user-tie fa-xl icon-gray">
+					</span> 
+					<img th:if="${user.photos != null}" style="width: 100%"
+						th:src="@{${user.getPhotoImagePath}}"  />
+				</div>
+				<div class="col-9">
+					<p class="mb-1">[[${user.getFullname}]]</p>
+					<p class="mb-1">[[${user.roles}]]</p>
+					<p>
+						<a th:replace="fragments:: entity_status(${user.enabled}, '/users/' + ${user.id}, 'user')"></a>
+						<a th:replace="fragments:: entity_edit('/users/edit/' + ${user.id}, 'user')"></a> 
+						&nbsp;
+						<a th:replace="fragments:: entity_delete('/users/delete/' 
+							+ ${user.id}, 'user', ${user.id}, true)"></a>
+					</p>
+				</div>	
+			</div>
+		</div>
+
+		<div th:replace="fragments:: pagination('users')"></div>
+
+		<div th:replace="modal_fragments:: modal_confirm"></div>
+
+
+		<div th:replace="fragments:: footer"></div>
+	</div>
+
+	<script th:src="@{/js/common_link.js}"></script>
+	<script>
+		moduleURL = "[[@{/users}]]";
+		$(document).ready(function() {
+			$(".link-delete").on('click', function(e){
+				e.preventDefault();
+				confirmDeleteModal($(this), 'user');
+			})
+		})
+	</script>
+</body>
+</html>

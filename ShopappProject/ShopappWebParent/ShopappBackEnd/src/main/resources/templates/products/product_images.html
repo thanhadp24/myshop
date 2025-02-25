@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content" th:remove='tag'>
+	<div class="row" id="divProductImages">
+		<div class="col border m-3 p-2">
+			<div><label>Main Image: [[${product.mainImage}]]</label></div>
+			<div class="m-2">
+				<img id="thumbnail" class="img-fluid" th:src="@{${product.mainImagePath}}">
+			</div>
+			<div>
+				<input type="file" id="fileImage" name="fileImage"
+				 th:required="${product.mainImage == null}" 
+				 accept="image/png, image/jpg, image/jpeg">
+			</div>
+			<input type="hidden" th:field="*{mainImage}">
+		</div>
+			
+		<th:block th:each="productImg, status :${product.images}">
+			<div class="col border m-3 p-2" th:id="${'divExtraImg' + status.index}">
+			<div>
+				<label>Extra Image #[[${status.index} + 1]]: [[${productImg.name}]]</label>
+				<a class='btn fa-regular fa-circle-xmark fa-2xl float-right' 
+					th:attr="onclick=|removeExtraImage('${status.index}')|" 
+					title='Remove this image'></a>
+			</div>
+			<div class="m-2">
+				<img th:id="${'extraThumbnail' + status.index}" class="img-fluid" 
+				th:src="@{${productImg.extraImage}}">
+			</div>
+			<div>
+				<input type="file" name="extraImage"
+				 accept="image/png, image/jpg, image/jpeg">
+			</div>
+			
+			<input type="hidden" name="imageIds" th:id="${'imageId' + status.index}"
+				th:value="${productImg.id}">
+			<input type="hidden" name="imageNames" th:id="${'imageName' + status.index}"
+				th:value="${productImg.name}">
+			
+		</div>
+		</th:block>
+			
+		<div class="col border m-3 p-2" th:id="'divExtraImg' + ${nboExtraImages}">
+			<div th:id="'extraImgHeader' + ${nboExtraImages}"><label>Extra Image #[[${nboExtraImages} + 1]]:</label>
+			</div>
+			<div class="m-2">
+				<img th:id="'extraThumbnail' + ${nboExtraImages}" class="img-fluid" 
+				th:src="@{/images/image-thumbnail.png}">
+			</div>
+			<div>
+				<input type="file" name="extraImage"
+				 accept="image/png, image/jpg, image/jpeg">
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

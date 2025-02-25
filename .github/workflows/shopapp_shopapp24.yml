@@ -1,0 +1,64 @@
+name: Build and deploy WAR app to Azure Web App - shopapp24
+
+on:
+  push:
+    branches:
+      - shopapp
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java version
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'microsoft'
+
+      - name: Build with Maven (skip tests)
+        run: |
+          cd ShopappProject
+          mvn clean install -DskipTests
+
+      - name: List files for debugging
+        run: dir ShopappProject/ShopappWebParent/ShopappBackend/target
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: ShopappProject
+          path: ShopappProject/ShopappWebParent/ShopappBackend/target/*.war
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: ShopappProject
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_D72A62940A2F403F899607E7B47C718F }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_EF1074FD744A4777AFA1B5ED97B90311 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CDB3503886274C25B6FAB80D9BD4E5B2 }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'shopapp24'
+          slot-name: 'Production'
+          package: 'ShopappProject/ShopappWebParent/ShopappBackend/target/*.war'
