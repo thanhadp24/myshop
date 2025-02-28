@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.shopapp.admin.helper.GeneralSettingBagHelper;
 import com.shopapp.admin.repository.CurrencyRepository;
 import com.shopapp.admin.service.SettingService;
-import com.shopapp.admin.utils.AmazonS3Util;
+import com.shopapp.admin.utils.FileUploadUtil;
 import com.shopapp.common.Constants;
 import com.shopapp.common.entity.Currency;
 import com.shopapp.common.entity.Setting;
@@ -99,11 +99,11 @@ public class SettingController {
 			 
 			String uploadDir = "site-logo";
 			
-			AmazonS3Util.removeFolder(uploadDir);
-			AmazonS3Util.uploadFile(uploadDir, fileName, multipartFile.getInputStream());
+//			AmazonS3Util.removeFolder(uploadDir);
+//			AmazonS3Util.uploadFile(uploadDir, fileName, multipartFile.getInputStream());
 			
-//			FileUploadUtil.cleanDir(uploadDir);
-//			FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
+			FileUploadUtil.cleanDir(uploadDir);
+			FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
 		}
 	}
 	

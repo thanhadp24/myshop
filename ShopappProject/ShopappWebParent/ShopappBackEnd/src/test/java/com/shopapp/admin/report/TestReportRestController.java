@@ -24,4 +24,39 @@ public class TestReportRestController {
 		
 		mockMvc.perform(get(requestURL)).andExpect(status().isOk()).andDo(print());
 	}
+	
+	
+	@Test
+	@WithMockUser(username = "user1", password = "111", authorities = {"Admin"})
+	public void testGetReport6Months() throws Exception {
+		String requestURL = "/reports/sales_by_date/last_6_months";
+		
+		mockMvc.perform(get(requestURL)).andExpect(status().isOk()).andDo(print());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", password = "111", authorities = {"Admin"})
+	public void testGetReportByDateRange() throws Exception {
+		String startDate = "2025-02-01";
+		String endDate = "2025-02-27";
+		String requestURL = "/reports/sales_by_date/" + startDate + "/" + endDate;
+		
+		mockMvc.perform(get(requestURL)).andExpect(status().isOk()).andDo(print());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", password = "111", authorities = {"Admin"})
+	public void testGetReportByCategory() throws Exception {
+		String requestURL = "/reports/category/last_7_days";
+		
+		mockMvc.perform(get(requestURL)).andExpect(status().isOk()).andDo(print());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", password = "111", authorities = {"Admin"})
+	public void testGetReportByProduct() throws Exception {
+		String requestURL = "/reports/product/last_7_days";
+		
+		mockMvc.perform(get(requestURL)).andExpect(status().isOk()).andDo(print());
+	}
 }

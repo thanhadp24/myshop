@@ -1,54 +1,36 @@
 package com.shopapp.admin.service.impl;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import com.shopapp.admin.bean.ReportItem;
+import com.shopapp.admin.enumm.ReportType;
 import com.shopapp.admin.repository.OrderRepository;
-import com.shopapp.admin.service.MasterOrderReportService;
 import com.shopapp.common.entity.order.Order;
 
 @Service
-public class MasterOrderReportServiceImpl implements MasterOrderReportService{
+@Primary
+public class MasterOrderReportServiceImpl extends AbstractReportService{
 
 	@Autowired
 	private OrderRepository orderRepository;
-	private DateFormat df;
 	
-	@Override
-	public List<ReportItem> getReportDataLast7Days() {
-		System.out.println(">> service controller...");
-		return getReportDataLastXDays(7);
-	}
-	
-	private List<ReportItem> getReportDataLastXDays(int days){
-		Date endTime = new Date();
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.DAY_OF_MONTH, -(days-1));
-		Date startTime = calendar.getTime();
-		
-		df = new SimpleDateFormat("yyy-MM-dd");
-		
-		return getReportDataByDateRange(startTime, endTime);
-	}
-	
-	private List<ReportItem> getReportDataByDateRange(Date startTime, Date endTime){
+	protected List<ReportItem> getReportDataByDateRangeInternal(Date startTime, Date endTime, ReportType reportType){
 		List<Order> ordersByDate = orderRepository.findByOrderTimeBetween(startTime, endTime);
 		printRawData(ordersByDate);
 		
-		List<ReportItem> reportData = createReportData(startTime, endTime);
+		List<ReportItem> reportData = createReportData(startTime, endTime, reportType);
 		
 		calculateSalesForReportData(ordersByDate, reportData);
 		printReportData(reportData);
 		
-		return null;
+		return reportData;
 	}
 	
 	private void calculateSalesForReportData(List<Order> orders, List<ReportItem> reportData) {
@@ -74,7 +56,7 @@ public class MasterOrderReportServiceImpl implements MasterOrderReportService{
 		});
 	}
 
-	private List<ReportItem> createReportData(Date startTime, Date endTime) {
+	private List<ReportItem> createReportData(Date startTime, Date endTime, ReportType reportType) {
 		List<ReportItem> res = new ArrayList<>();
 		
 		Calendar startDate = Calendar.getInstance();
@@ -88,7 +70,11 @@ public class MasterOrderReportServiceImpl implements MasterOrderReportService{
 		res.add(new ReportItem(dateString));
 		
 		do {
-			startDate.add(Calendar.DAY_OF_MONTH, 1);
+			if(reportType.equals(ReportType.DAY)){
+				startDate.add(Calendar.DAY_OF_MONTH, 1);
+			} else if(reportType.equals(ReportType.MONTH)) {
+				startDate.add(Calendar.MONTH, 1);
+			}
 			currentDate = startDate.getTime();
 			dateString = df.format(currentDate);
 			res.add(new ReportItem(dateString));
@@ -102,4 +88,7 @@ public class MasterOrderReportServiceImpl implements MasterOrderReportService{
 			System.out.printf("%s | %10.2f | %10.2f\n", o.getOrderTime(), o.getTotal(), o.getSubtotal());
 		});
 	}
+
+	
+
 }
