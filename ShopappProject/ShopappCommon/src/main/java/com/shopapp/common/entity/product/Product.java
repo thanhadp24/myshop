@@ -24,7 +24,7 @@ import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "products")
-public class Product extends IdBaseEntity{
+public class Product extends IdBaseEntity {
 
 	@Column(nullable = false, unique = true, length = 256)
 	private String name;
@@ -74,13 +74,16 @@ public class Product extends IdBaseEntity{
 
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<ProductImage> images = new HashSet<>();
-	
+
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProductDetail> productDetails = new ArrayList<>();
-	
+
+	private int reviewCount;
+	private float averageRating;
+
 	public Product() {
 	}
-	
+
 	public Product(Integer id) {
 		this.id = id;
 	}
@@ -96,7 +99,7 @@ public class Product extends IdBaseEntity{
 	public void setProductDetails(List<ProductDetail> productDetails) {
 		this.productDetails = productDetails;
 	}
-	
+
 	public Set<ProductImage> getImages() {
 		return images;
 	}
@@ -249,27 +252,42 @@ public class Product extends IdBaseEntity{
 		this.brand = brand;
 	}
 
+	public int getReviewCount() {
+		return reviewCount;
+	}
+
+	public void setReviewCount(int reviewCount) {
+		this.reviewCount = reviewCount;
+	}
+
+	public float getAverageRating() {
+		return averageRating;
+	}
+
+	public void setAverageRating(float averageRating) {
+		this.averageRating = averageRating;
+	}
+
 	@Override
 	public String toString() {
 		return "Product [id=" + id + ", name=" + name + "]";
 	}
-	
+
 	public void addExtraImage(String imageName) {
 		this.images.add(new ProductImage(imageName, this));
 	}
-	
 
 	public void addExtraDetail(Integer id, String name, String value) {
 		this.productDetails.add(new ProductDetail(id, name, value, this));
 	}
-	
+
 	public void addExtraDetail(String name, String value) {
 		this.productDetails.add(new ProductDetail(name, value, this));
 	}
-	
+
 	@Transient
 	public String getMainImagePath() {
-		if(this.id == null || this.getMainImage() == null) {
+		if (this.id == null || this.getMainImage() == null) {
 			return "/images/image-thumbnail.png";
 		}
 		return Constants.S3_BASE_URI + "/product-images/" + this.id + "/" + this.mainImage;
@@ -278,22 +296,21 @@ public class Product extends IdBaseEntity{
 	public boolean containsImageFileName(String fileName) {
 		return this.images.stream().anyMatch(i -> i.getName().equals(fileName));
 	}
-	
+
 	@Transient
 	public String getShortName() {
-		if(this.name.length() > 70) {
+		if (this.name.length() > 70) {
 			return this.name.substring(0, 70).concat("...");
 		}
 		return this.name;
 	}
-	
-	
+
 	@Transient
 	public float getDiscountPrice() {
-		if(this.discountPercent > 0) {
-			return this.price*(1 - this.discountPercent/100);
+		if (this.discountPercent > 0) {
+			return this.price * (1 - this.discountPercent / 100);
 		}
 		return this.price;
 	}
-	
+
 }
