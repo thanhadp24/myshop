@@ -3,6 +3,7 @@ package com.shopapp.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -22,4 +23,11 @@ public interface ProductRepository extends JpaRepository<Product, Integer>{
 			+ " MATCH(name, short_description, full_description) "
 			+ " AGAINST(:keyword IN BOOLEAN MODE)", nativeQuery = true)
 	public Page<Product> search(String keyword, Pageable pageable);
+	
+	@Query("UPDATE Product p SET p.averageRating = "
+			+ "COALESCE((SELECT AVG(r.rating) FROM Review r WHERE r.product.id = ?1), 0),"
+			+ " p.reviewCount = (SELECT COUNT(r.id) FROM Review r WHERE r.product.id = ?1)"
+			+ " WHERE p.id = ?1")
+	@Modifying
+	public void updateReviewCountAndAverageRating(Integer productId);
 }

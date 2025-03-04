@@ -7,16 +7,23 @@ import org.springframework.stereotype.Service;
 
 import com.shopapp.admin.common.Common;
 import com.shopapp.admin.helper.PagingAndSortingHelper;
+import com.shopapp.admin.repository.ProductRepository;
 import com.shopapp.admin.repository.ReviewRepository;
 import com.shopapp.admin.service.ReviewService;
 import com.shopapp.common.entity.Review;
 import com.shopapp.common.exception.ReviewNotFoundException;
 
+import jakarta.transaction.Transactional;
+
 @Service
+@Transactional
 public class ReviewServiceImpl implements ReviewService {
 
 	@Autowired
 	private ReviewRepository reviewRepository;
+	
+	@Autowired
+	private ProductRepository productRepository;
 
 	@Override
 	public Review get(Integer id) throws ReviewNotFoundException {
@@ -39,6 +46,7 @@ public class ReviewServiceImpl implements ReviewService {
 		reviewInDb.setHeadline(reviewInForm.getHeadline());
 		
 		reviewRepository.save(reviewInDb);
+		productRepository.updateReviewCountAndAverageRating(reviewInDb.getProduct().getId());
 	}
 	
 	@Override

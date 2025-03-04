@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments:: page_head(${pageTitle}, 'none')">
-</head>
+	<head>
+		<head th:replace="fragments:: page_head(${pageTitle}, 'tag')" />
+		<link th:href="@{/rating-star/css/star-rating.css}" media="all" rel="stylesheet" />
+		<script th:src="@{/rating-star/js/star-rating.js}" ></script>
+		<link th:href="@{/rating-star/themes/krajee-svg/theme.css}" media="all" rel="stylesheet" />
+		<script th:src="@{/rating-star/themes/krajee-svg/theme.js}"></script>
+		 
+	</head>>
 <body>
 <div class="container-fluid">
 	<div th:replace="navigation:: header_navbar"></div>
@@ -14,6 +20,10 @@
 				<a th:href="@{'/c/' + ${cat.alias}}">
 					<img th:src="@{${cat.imagePath}}" width="70px" height="70px">
 					<br>
+					<div>
+						<input type="text" class="product-detail-rating-star" dir="ltr" data-size="xs"
+								th:value="${product.averageRating}"/>
+					</div>
 					<b>[[${cat.name}]]</b>
 				</a>
 			</div>
@@ -30,5 +40,14 @@
 	
 	<div th:replace="navigation:: footer_navbar"></div>
 </div>
+
+<script>
+	$(".product-detail-rating-star").rating({
+		displayOnly: true,
+		hoverOnClera: false,
+		showCaption: false,
+		theme: 'krajee-svg'
+	})
+</script>
 </body>
 </html>

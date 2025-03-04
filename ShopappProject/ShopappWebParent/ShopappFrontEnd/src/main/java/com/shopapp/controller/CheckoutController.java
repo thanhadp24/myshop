@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.shopapp.ControllerHelper;
 import com.shopapp.bean.CheckoutInfo;
 import com.shopapp.common.bean.CurrencySettingBag;
 import com.shopapp.common.bean.EmailSettingBag;
@@ -26,7 +27,6 @@ import com.shopapp.common.enumm.PaymentMethod;
 import com.shopapp.exception.PaypalApiException;
 import com.shopapp.service.AddressService;
 import com.shopapp.service.CheckoutService;
-import com.shopapp.service.CustomerService;
 import com.shopapp.service.OrderService;
 import com.shopapp.service.PaypalService;
 import com.shopapp.service.SettingService;
@@ -45,14 +45,16 @@ public class CheckoutController {
 	@Autowired private AddressService addressService;
 	@Autowired private ShoppingCartService cartService;
 	@Autowired private ShippingRateService rateService;
-	@Autowired private CustomerService customerService;
 	@Autowired private OrderService orderService;
 	@Autowired private SettingService settingService;
 	@Autowired private PaypalService paypalService;
+	
+	@Autowired
+	private ControllerHelper controllerHelper;
 
 	@GetMapping("/checkout")
 	public String viewCheckoutPage(Model model, HttpServletRequest request) {
-		Customer customer = getAuthenticatedCustomer(request);
+		Customer customer = controllerHelper.getAuthenticatedCustomer(request);
 
 		Address defaultAddress = addressService.getDefaultByCustomer(customer);
 		ShippingRate shippingRate = null;
@@ -85,7 +87,7 @@ public class CheckoutController {
 	
 	@PostMapping("/place_order")
 	public String placeOrder(HttpServletRequest request) throws UnsupportedEncodingException, MessagingException {
-		Customer customer = getAuthenticatedCustomer(request);
+		Customer customer = controllerHelper.getAuthenticatedCustomer(request);
 
 		String paymentType = request.getParameter("paymentMethod");
 		PaymentMethod paymentMethod = PaymentMethod.valueOf(paymentType);
@@ -169,8 +171,4 @@ public class CheckoutController {
 		mailSender.send(message);
 	}
 
-	private Customer getAuthenticatedCustomer(HttpServletRequest request) {
-		String customerEmail = Utils.getEmailOfAuthenticationCustomer(request);
-		return customerService.getByEmail(customerEmail);
-	}
 }

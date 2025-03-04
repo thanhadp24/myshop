@@ -7,13 +7,18 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.shopapp.ControllerHelper;
 import com.shopapp.common.Common;
 import com.shopapp.common.entity.Category;
+import com.shopapp.common.entity.Customer;
 import com.shopapp.common.entity.product.Product;
 import com.shopapp.common.exception.CategoryNotFoundException;
 import com.shopapp.common.exception.ProductNotFoundException;
 import com.shopapp.service.CategoryService;
 import com.shopapp.service.ProductService;
+import com.shopapp.service.ReviewService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class ProductController {
@@ -23,6 +28,12 @@ public class ProductController {
 	
 	@Autowired
 	private ProductService productService;
+	
+	@Autowired
+	private ReviewService reviewService;
+	
+	@Autowired
+	private ControllerHelper controllerHelper;
 	
 	@GetMapping("/c/{category_alias}")
 	public String viewProductsFirstPage(
@@ -68,13 +79,26 @@ public class ProductController {
 	
 	@GetMapping("/p/{product_alias}")
 	public String viewProductDetail(@PathVariable("product_alias") String alias,
-			Model model) {
+			Model model, HttpServletRequest request) {
 		
 		try {
 			Product product = productService.getByAlias(alias);
+			Customer customer = controllerHelper.getAuthenticatedCustomer(request);
+			if(customer != null) {
+				boolean customerReviewed = reviewService.didCustomerReviewProduct(customer, product.getId());
+				
+				if(customerReviewed) {
+					model.addAttribute("customerReviewed", customerReviewed);
+				}else {
+					boolean customerCanReview = reviewService.canCustomerReviewProduct(customer, product.getId());
+					model.addAttribute("customerCanReview", customerCanReview);
+				}
+			}
 			model.addAttribute("categoryParents", categoryService.getParents(product.getCategory()));
 			model.addAttribute("product", product);
 			model.addAttribute("pageTitle", product.getShortName());
+			
+			model.addAttribute("reviews", reviewService.get3MostRecentReviewsByProduct(product));
 			
 			return "product/product_detail";
 		} catch (ProductNotFoundException e) {

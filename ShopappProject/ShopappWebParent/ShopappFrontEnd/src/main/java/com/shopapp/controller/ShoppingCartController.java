@@ -7,15 +7,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.shopapp.ControllerHelper;
 import com.shopapp.common.entity.Address;
 import com.shopapp.common.entity.CartItem;
 import com.shopapp.common.entity.Customer;
 import com.shopapp.common.entity.ShippingRate;
 import com.shopapp.service.AddressService;
-import com.shopapp.service.CustomerService;
 import com.shopapp.service.ShippingRateService;
 import com.shopapp.service.ShoppingCartService;
-import com.shopapp.utils.Utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -24,7 +23,7 @@ public class ShoppingCartController {
 	
 	@Autowired	private ShoppingCartService cartService;
 	
-	@Autowired	private CustomerService customerService;
+	@Autowired	private ControllerHelper controllerHelper;
 	
 	@Autowired	private ShippingRateService rateService;
 	
@@ -33,7 +32,7 @@ public class ShoppingCartController {
 	@GetMapping("/cart")
 	public String viewCart(HttpServletRequest request, Model model) {
 		
-		Customer customer = getAuthenticatedCustomer(request);
+		Customer customer = controllerHelper.getAuthenticatedCustomer(request);
 		
 		List<CartItem> cartItems = cartService.getCartItems(customer);
 		
@@ -63,8 +62,4 @@ public class ShoppingCartController {
 		return "cart/shopping_cart";
 	}
 	
-	private Customer getAuthenticatedCustomer(HttpServletRequest request) {
-		String customerEmail = Utils.getEmailOfAuthenticationCustomer(request);
-		return customerService.getByEmail(customerEmail);
-	}
 }

@@ -81,7 +81,10 @@ public class ProductServiceImpl implements ProductService{
 		
 		product.setUpdatedAt(new Date());
 		
-		return productRepository.save(product);
+		 Product productUpdated = productRepository.save(product);
+		 productRepository.updateReviewCountAndAverageRating(productUpdated.getId());
+		 
+		 return productUpdated;
 	}
 	
 	@Override

@@ -72,4 +72,9 @@ public class TestProductRepository {
 	public void testGetAll() {
 		productRepository.findAll().forEach(System.out::println);
 	}
+	
+	@Test
+	public void testUpdateReviewAndCount() {
+		productRepository.updateReviewCountAndAverageRating(1);
+	}
 }

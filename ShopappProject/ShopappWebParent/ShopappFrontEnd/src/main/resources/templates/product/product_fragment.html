@@ -8,8 +8,12 @@
 			<br>
 			<b>[[${product.shortName}]]</b>
 		</div>
+		<div>
+			<input type="text" class="product-detail-rating-star" dir="ltr" data-size="xs"
+				th:value="${product.averageRating}"/>
+		</div>
+		<div th:replace="product/product_fragment:: product_price" th:remove="tag"></div>
 	</a>
-	<div th:replace="product/product_fragment:: product_price" th:remove="tag"></div>
 </div>
 
 <div th:fragment="product_price">

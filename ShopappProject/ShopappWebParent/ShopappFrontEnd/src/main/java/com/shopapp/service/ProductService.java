@@ -12,4 +12,7 @@ public interface ProductService {
 	Product getByAlias(String alias) throws ProductNotFoundException;
 	
 	Page<Product> search(String keyword, int pageNum);
+
+	Product get(Integer productId) throws ProductNotFoundException;
+
 }

@@ -47,4 +47,14 @@ public class ProductServiceImpl implements ProductService{
 		
 		return productRepository.search(keyword+"*", pageable); 
 	}
+	
+	@Override
+	public Product get(Integer productId) throws ProductNotFoundException {
+		try {
+			return productRepository.findById(productId).get();
+			
+		} catch (NoSuchElementException e) {
+			throw new ProductNotFoundException("Could not find any product with id: " + productId);
+		}
+	}
 }

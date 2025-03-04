@@ -83,6 +83,15 @@
 							=	
 							<div th:replace="fragments:: format_currency(${detail.subtotal})"></div>
 						</div>
+						<div th:if="${!product.reviewedByCustomer && product.customerCanReview}">
+							<a th:href="@{'/write_review/product/' + ${product.id}}" class="btn btn-info">Write review</a>
+						</div>
+						<div th:if="${product.reviewedByCustomer}">
+							<a class="btn btn-warning"
+							th:href="@{'/reviews/page/1?sortDir=desc&sortField=reviewTime&
+							keyword=' + ${#strings.substring(product.shortName,0)}}"
+							 >See your review</a>
+						</div>
 					</div>
 				</div>
 			</th:block>

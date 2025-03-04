@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.shopapp.ControllerHelper;
 import com.shopapp.common.entity.Address;
 import com.shopapp.common.entity.Customer;
 import com.shopapp.service.AddressService;
 import com.shopapp.service.CustomerService;
-import com.shopapp.utils.Utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -27,9 +27,12 @@ public class AddressController {
 	@Autowired
 	private CustomerService customerService;
 	
+	@Autowired
+	private ControllerHelper controllerHelper;
+	
 	@GetMapping("/address_book")
 	public String showAddressBook(Model model, HttpServletRequest request) {
-		Customer customer = getAuthenticatedCustomer(request);
+		Customer customer = controllerHelper.getAuthenticatedCustomer(request);
 		
 		List<Address> addresses = addressService.getAddressesBook(customer);
 		boolean usePrimaryAddressAsDefault = true;
@@ -62,7 +65,7 @@ public class AddressController {
 	public String saveAddress(Address address, HttpServletRequest request, 
 			RedirectAttributes ra) {
 		
-		Customer customer = getAuthenticatedCustomer(request);
+		Customer customer = controllerHelper.getAuthenticatedCustomer(request);
 		address.setCustomer(customer);
 		addressService.save(address);
 		
@@ -84,7 +87,7 @@ public class AddressController {
 	public String editAddress(@PathVariable("id") Integer id, 
 			HttpServletRequest request, Model model) {
 		
-		Customer customer = getAuthenticatedCustomer(request);
+		Customer customer = controllerHelper.getAuthenticatedCustomer(request);
 		
 		Address address = addressService.get(customer.getId(), id);
 		
@@ -98,7 +101,7 @@ public class AddressController {
 	@GetMapping("/address_book/delete/{id}")
 	public String deleteAddress(@PathVariable("id") Integer id, 
 			HttpServletRequest request, RedirectAttributes ra) {
-		Customer customer = getAuthenticatedCustomer(request);
+		Customer customer = controllerHelper.getAuthenticatedCustomer(request);
 		addressService.delete(customer.getId(), id);
 		
 		ra.addFlashAttribute("message", "The address has been deleted successfully");
@@ -110,7 +113,7 @@ public class AddressController {
 	public String setDefaultAddress(@PathVariable("id") Integer id, 
 			HttpServletRequest request) {
 		
-		Customer customer = getAuthenticatedCustomer(request);
+		Customer customer = controllerHelper.getAuthenticatedCustomer(request);
 		addressService.setDefaultAddress(id, customer.getId());
 		
 		String redirectOption = request.getParameter("redirect");
@@ -125,8 +128,4 @@ public class AddressController {
 		return redirectURL;
 	}
 	
-	private Customer getAuthenticatedCustomer(HttpServletRequest request) {
-		String customerEmail = Utils.getEmailOfAuthenticationCustomer(request);
-		return customerService.getByEmail(customerEmail);
-	}
 }

@@ -1,5 +1,7 @@
 package com.shopapp.controller;
 
+import java.util.Iterator;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -8,13 +10,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.shopapp.ControllerHelper;
 import com.shopapp.common.Common;
 import com.shopapp.common.entity.Customer;
 import com.shopapp.common.entity.order.Order;
+import com.shopapp.common.entity.order.OrderDetail;
+import com.shopapp.common.entity.product.Product;
 import com.shopapp.common.exception.OrderNotFoundException;
-import com.shopapp.service.CustomerService;
 import com.shopapp.service.OrderService;
-import com.shopapp.utils.Utils;
+import com.shopapp.service.ReviewService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -25,7 +29,10 @@ public class OrderController {
 	private OrderService orderService;
 	
 	@Autowired
-	private CustomerService customerService;
+	private ControllerHelper controllerHelper;
+	
+	@Autowired
+	private ReviewService reviewService;
 	
 	@GetMapping("/orders")
 	public String viewFirstPage(HttpServletRequest request, Model model) {
@@ -37,7 +44,7 @@ public class OrderController {
 			HttpServletRequest request, @PathVariable("pageNum") Integer pageNum, 
 			Model model) {
 		
-		Customer customer = getAuthenticatedCustomer(request);
+		Customer customer = controllerHelper.getAuthenticatedCustomer(request);
 		Page<Order> page = orderService.getForCustomerByPage(pageNum, customer, sortField, sortDir, orderKeyword);
 		long totalItems = page.getTotalElements();
 		
@@ -67,7 +74,11 @@ public class OrderController {
 	public String viewOrderDetail(@PathVariable("id") Integer id, Model model, 
 			HttpServletRequest request, RedirectAttributes ra) {
 		try {
-			Order order = orderService.get(id, getAuthenticatedCustomer(request));
+			Customer customer =  controllerHelper.getAuthenticatedCustomer(request);
+			Order order = orderService.get(id, customer);
+			
+			setProductReviewableStatus(customer, order);
+			
 			model.addAttribute("order", order);
 			return "orders/order_detail_modal";
 		} catch (OrderNotFoundException e) {
@@ -76,8 +87,21 @@ public class OrderController {
 		}
 	}
 	
-	private Customer getAuthenticatedCustomer(HttpServletRequest request) {
-		String customerEmail = Utils.getEmailOfAuthenticationCustomer(request);
-		return customerService.getByEmail(customerEmail);
+	private void setProductReviewableStatus(Customer customer, Order order) {
+		Iterator<OrderDetail> iterator = order.getOrderDetails().iterator();
+		while(iterator.hasNext()) {
+			OrderDetail orderDetail = iterator.next();
+			Product product = orderDetail.getProduct();
+			Integer productId = product.getId();
+			
+			boolean didCustomerReviewProduct = reviewService.didCustomerReviewProduct(customer, productId);
+			product.setReviewedByCustomer(didCustomerReviewProduct);
+			System.out.println(">> echeck didCustomerReviewProduct: " + didCustomerReviewProduct);
+
+			boolean canCustomerReviewProduct = reviewService.canCustomerReviewProduct(customer, productId);
+			product.setCustomerCanReview(canCustomerReviewProduct);
+			System.out.println(">> echeck canCustomerReviewProduct: " + canCustomerReviewProduct);
+		}
 	}
+
 }
