@@ -37,38 +37,7 @@
 		<div class="col"><hr/></div>
 	</div>	
 	
-	<div class="row m-2">
-		<div class="col">
-			<th:block th:each="review: ${reviews}">
-				<div class="row">
-					<div class="col-xs">
-						<input type="text" class="product-detail-rating-star" data-size="xs" dir="ltr"
-									th:value="${product.averageRating}"/>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col">
-						<b>[[${review.headline}]]</b>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col">
-						<b>[[${review.comment}]]</b>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col">
-						<small class="ml-3">[[${review.customer.fullName}]],
-							<div th:replace="fragments::format_time(${review.reviewTime})"></div>
-						</small>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col"><hr/></div>
-				</div>	
-			</th:block>
-		</div>
-	</div>
+	<div th:replace="reviews/review_vote::content"></div>
 </div> 
 </body>
 </html>

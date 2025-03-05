@@ -57,4 +57,15 @@ public class TestReview {
 		Long countByProductAndCustomer = repository.countByProductAndCustomer(productId, customerId);
 		System.out.println(countByProductAndCustomer);
 	}
+	
+	@Test
+	public void testVote() {
+		repository.updateVoteCount(9);
+	}
+	
+	@Test
+	public void testGetReviewVote() {
+		Integer voteCount = repository.getVoteCount(9);
+		System.out.println(voteCount);
+	}
 }

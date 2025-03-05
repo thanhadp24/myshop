@@ -66,6 +66,14 @@ public class ReviewServiceImpl implements ReviewService{
 	}
 	
 	@Override
+	public Page<Review> get3MostVotesReviewsByProduct(Product product){
+		Sort sort = Sort.by("votes").descending();
+		Pageable pageable = PageRequest.of(0, 3, sort);
+		
+		return reviewRepository.findByProduct(product, pageable);
+	}
+	
+	@Override
 	public Page<Review> getByProduct(Product product, int pageNum, String sortDir, String sortField){
 		Sort sort = Sort.by(sortField);
 		sort = sortDir.equals("asc") ? sort.ascending(): sort.descending();

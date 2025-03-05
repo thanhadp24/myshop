@@ -23,4 +23,6 @@ public interface ReviewService {
 
 	Review save(Review review);
 
+	Page<Review> get3MostVotesReviewsByProduct(Product product);
+
 }

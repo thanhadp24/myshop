@@ -3,6 +3,7 @@ package com.shopapp.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -28,4 +29,12 @@ public interface ReviewRepository extends JpaRepository<Review, Integer>{
 	@Query("SELECT COUNT(*) FROM Review r WHERE r.customer.id = ?2 AND "
 			+ "r.product.id = ?1")
 	public Long countByProductAndCustomer(Integer productId, Integer customerId);
+	
+	@Query("UPDATE Review r SET r.votes = COALESCE((SELECT SUM(rv.votes) FROM ReviewVote rv WHERE "
+			+ " rv.review.id = ?1), 0) WHERE r.id = ?1")
+	@Modifying
+	public void updateVoteCount(Integer reviewId);
+	
+	@Query("SELECT r.votes FROM Review r WHERE r.id = ?1")
+	public Integer getVoteCount(Integer reviewId);
 }

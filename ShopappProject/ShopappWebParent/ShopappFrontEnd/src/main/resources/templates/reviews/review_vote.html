@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+<div th:fragment="content" class="row m-2">
+	<div class="col">
+		<th:block th:each="review: ${reviews}">
+			<div class="row align-items-center">
+				<div class="col-xs">
+					<input type="text" class="product-detail-rating-star" data-size="xs" dir="ltr"
+						th:value="${product.averageRating}" />
+				</div>
+				<div class="col-xs ml-2">
+					<a th:href="@{'/vote_review/' + ${review.id} + '/up'}" 
+						th:reviewId="${review.id}"
+						th:id="'linkVoteUp-' + ${review.id}"
+						class="fa-thumbs-up linkVoteReview"
+						th:classappend="${review.upvotedByCurrentCustomer ? 'fas':'far'}"></a>
+				</div>
+				<div class="col-xs ml-2">
+					<span th:id="'voteCount-' + ${review.id}">[[${review.votes}]] votes</span>
+				</div>	
+				<div class="col-xs ml-2">
+					<a th:href="@{'/vote_review/' + ${review.id} + '/down'}" 
+						th:reviewId="${review.id}"
+						th:id="'linkVoteDown-' + ${review.id}"
+						class="fa-thumbs-down linkVoteReview"
+						th:classappend="${review.downVotedByCurrentCustomer ? 'fas':'far'}"></a>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<b>[[${review.headline}]]</b>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<b>[[${review.comment}]]</b>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<small class="ml-3">[[${review.customer.fullName}]],
+						<div th:replace="fragments::format_time(${review.reviewTime})"></div>
+					</small>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<hr />
+				</div>
+			</div>
+		</th:block>
+	</div>
+</div>
+</body>
+
+</html>

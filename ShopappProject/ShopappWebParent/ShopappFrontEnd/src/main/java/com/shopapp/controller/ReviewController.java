@@ -1,5 +1,7 @@
 package com.shopapp.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,7 @@ import com.shopapp.common.entity.product.Product;
 import com.shopapp.common.exception.ProductNotFoundException;
 import com.shopapp.service.ProductService;
 import com.shopapp.service.ReviewService;
+import com.shopapp.service.ReviewVoteService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -33,22 +36,28 @@ public class ReviewController {
 	
 	@Autowired
 	private ControllerHelper controllerHelper;
-
+	
+	@Autowired
+	private ReviewVoteService reviewVoteService;
+	
 	@GetMapping("/reviews")
 	public String viewReviews() {
 		return defaultRedirectURL;
 	}
 
 	@GetMapping("/ratings/{productAlias}")
-	public String viewReviewProduct(@PathVariable("productAlias") String productAlias, Model model) {
-		return viewReviewsProductByPage(model, productAlias, 1, "desc", "reviewTime");
+	public String viewReviewProduct(@PathVariable("productAlias") String productAlias, Model model, 
+			HttpServletRequest request) {
+		return viewReviewsProductByPage(model, productAlias, 1, "desc", "reviewTime", request);
 	}
 	
 	@GetMapping("/ratings/{productAlias}/page/{pageNum}")
 	public String viewReviewsProductByPage(Model model, @PathVariable("productAlias") String productAlias,
-			@PathVariable("pageNum") Integer pageNum, String sortDir, String sortField) {
+			@PathVariable("pageNum") Integer pageNum, String sortDir, String sortField,
+			HttpServletRequest request) {
 
 		Product product = null;
+		Customer customer = controllerHelper.getAuthenticatedCustomer(request);
 		try {
 			product = productService.getByAlias(productAlias);
 		} catch (Exception e) {
@@ -56,6 +65,13 @@ public class ReviewController {
 		}
 
 		Page<Review> page = reviewService.getByProduct(product, pageNum, sortDir, sortField);
+		List<Review> reviews = page.getContent();
+
+		if(customer != null) {
+			reviewVoteService.markReviewVoted4ProductByCustomer(reviews, product.getId(), customer.getId());
+		}
+		
+
 		long totalItems = page.getTotalElements();
 
 		long startCount = (pageNum - 1) * Common.REVIEWS_PER_PAGE + 1;
@@ -64,11 +80,12 @@ public class ReviewController {
 		if (endCount > totalItems) {
 			endCount = totalItems;
 		}
+		
 
 		model.addAttribute("currentPage", pageNum);
 		model.addAttribute("totalPages", page.getTotalPages());
 		model.addAttribute("totalItems", totalItems);
-		model.addAttribute("reviews", page.getContent());
+		model.addAttribute("reviews", reviews);
 		model.addAttribute("sortDir", sortDir);
 		model.addAttribute("sortField", sortField);
 		model.addAttribute("startCount", startCount);

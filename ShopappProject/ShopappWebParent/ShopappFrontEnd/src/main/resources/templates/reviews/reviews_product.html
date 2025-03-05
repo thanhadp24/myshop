@@ -19,6 +19,14 @@
 		</div>
 		<div class="col-xs-8">
 			<div><h3>[[${product.name}]]</h3></div>
+			<div>
+				&nbsp;&nbsp;
+				<a th:href="@{'/ratings/' + ${product.alias} + '/page/' + ${currentPage} 
+				+ '?sortField=votes&sortDir=desc'}">Sort by most votes</a>
+				&nbsp;&nbsp;
+				<a th:href="@{'/ratings/' + ${product.alias} + '/page/' + ${currentPage} 
+								+ '?sortField=reviewTime&sortDir=desc'}">Sort by most recent</a>
+			</div>
 			<div class="row m-1">
 				<div class="col-xs">
 					<input type="text" class="product-detail-rating-star" data-size="md" dir="ltr"
@@ -38,36 +46,22 @@
 		<div class="col"><hr/></div>
 	</div>	
 		
-	<div class="row m-2">
-		<div class="col">
-			<th:block th:each="review: ${reviews}">
-				<div class="row">
-					<div class="col-xs">
-						<input type="text" class="product-detail-rating-star" data-size="xs" dir="ltr"
-									th:value="${product.averageRating}"/>
-					</div>
+	<div th:replace="reviews/review_vote::content"></div>
+	
+	<div th:fragment="modal_dialog" class="modal fade text-center" id="modalDialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title" id="modalTitle">Warning</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
-				<div class="row">
-					<div class="col">
-						<b>[[${review.headline}]]</b>
-					</div>
+				<div class="modal-body">
+					<span id="modalBody"></span>
 				</div>
-				<div class="row">
-					<div class="col">
-						<b>[[${review.comment}]]</b>
-					</div>
+				<div class="modal-footer">
+					<button class="btn btn-danger" data-dismiss="modal">Close</button>
 				</div>
-				<div class="row">
-					<div class="col">
-						<small class="ml-3">[[${review.customer.fullName}]],
-							<div th:replace="fragments::format_time(${review.reviewTime})"></div>
-						</small>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col"><hr/></div>
-				</div>	
-			</th:block>
+			</div>
 		</div>
 	</div>
 	
@@ -79,6 +73,9 @@
 	decimalSeparator = "[[${DECIAML_POINT_TYPE == 'COMMA' ? ',':'.'}]]"
 	thousandSeparator = "[[${THOUSANDS_POINT_TYPE == 'COMMA' ? ',':'.'}]]"
 	
+	csrfHeaderName = "[[${_csrf.headerName}]]"
+	csrfValue = "[[${_csrf.token}]]"
+	
 	$(".product-detail-rating-star").rating({
 		displayOnly: true,
 		hoverOnClera: false,
@@ -88,5 +85,7 @@
 </script>
 <script th:src="@{/js/jquery.number.min.js}"></script>
 <script th:src="@{/js/common_rating.js}"></script>
+<script th:src="@{/js/review_vote.js}"></script>
+<script th:src="@{/js/common_modal.js}"></script>
 </body>
 </html>

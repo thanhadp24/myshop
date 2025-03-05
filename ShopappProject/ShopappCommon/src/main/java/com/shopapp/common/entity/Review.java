@@ -1,6 +1,7 @@
 package com.shopapp.common.entity;
 
 import java.util.Date;
+import java.util.Objects;
 
 import com.shopapp.common.entity.product.Product;
 
@@ -10,6 +11,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "reviews")
@@ -22,6 +24,7 @@ public class Review extends IdBaseEntity {
 	private String comment;
 
 	private int rating;
+	private int votes;
 
 	@Column(nullable = false)
 	private Date reviewTime;
@@ -33,7 +36,28 @@ public class Review extends IdBaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
+	
+	@Transient
+	private boolean upvotedByCurrentCustomer;
+	
+	@Transient
+	private boolean downVotedByCurrentCustomer;
+	
+	public Review() {
+	}
+	
+	public Review(int id) {
+		this.id = id;
+	}
 
+	public int getVotes() {
+		return votes;
+	}
+
+	public void setVotes(int votes) {
+		this.votes = votes;
+	}
+	
 	public String getHeadline() {
 		return headline;
 	}
@@ -81,6 +105,22 @@ public class Review extends IdBaseEntity {
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
+	
+	public boolean isUpvotedByCurrentCustomer() {
+		return upvotedByCurrentCustomer;
+	}
+
+	public void setUpvotedByCurrentCustomer(boolean upvotedByCurrentCustomer) {
+		this.upvotedByCurrentCustomer = upvotedByCurrentCustomer;
+	}
+
+	public boolean isDownVotedByCurrentCustomer() {
+		return downVotedByCurrentCustomer;
+	}
+
+	public void setDownVotedByCurrentCustomer(boolean downVotedByCurrentCustomer) {
+		this.downVotedByCurrentCustomer = downVotedByCurrentCustomer;
+	}
 
 	@Override
 	public String toString() {
@@ -88,5 +128,21 @@ public class Review extends IdBaseEntity {
 				+ reviewTime + ", product=" + product.getShortName() + ", customer=" + customer.getFullName() + "]";
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == this) {
+			return true;
+		}
+		
+		if(!(obj instanceof Review that)) {
+			return false;
+		}
+		
+		return this.getId() == that.getId();
+	}
 	
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.getId());
+	}
 }

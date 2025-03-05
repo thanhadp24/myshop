@@ -1,5 +1,7 @@
 package com.shopapp.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -11,12 +13,14 @@ import com.shopapp.ControllerHelper;
 import com.shopapp.common.Common;
 import com.shopapp.common.entity.Category;
 import com.shopapp.common.entity.Customer;
+import com.shopapp.common.entity.Review;
 import com.shopapp.common.entity.product.Product;
 import com.shopapp.common.exception.CategoryNotFoundException;
 import com.shopapp.common.exception.ProductNotFoundException;
 import com.shopapp.service.CategoryService;
 import com.shopapp.service.ProductService;
 import com.shopapp.service.ReviewService;
+import com.shopapp.service.ReviewVoteService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -34,6 +38,9 @@ public class ProductController {
 	
 	@Autowired
 	private ControllerHelper controllerHelper;
+
+	@Autowired
+	private ReviewVoteService reviewVoteService;
 	
 	@GetMapping("/c/{category_alias}")
 	public String viewProductsFirstPage(
@@ -84,8 +91,12 @@ public class ProductController {
 		try {
 			Product product = productService.getByAlias(alias);
 			Customer customer = controllerHelper.getAuthenticatedCustomer(request);
+			Page<Review> get3MostRecentReviewsByProduct = reviewService.get3MostRecentReviewsByProduct(product);
+			List<Review> content = get3MostRecentReviewsByProduct.getContent();
+			
 			if(customer != null) {
 				boolean customerReviewed = reviewService.didCustomerReviewProduct(customer, product.getId());
+				reviewVoteService.markReviewVoted4ProductByCustomer(content, product.getId(), customer.getId());
 				
 				if(customerReviewed) {
 					model.addAttribute("customerReviewed", customerReviewed);
@@ -98,7 +109,7 @@ public class ProductController {
 			model.addAttribute("product", product);
 			model.addAttribute("pageTitle", product.getShortName());
 			
-			model.addAttribute("reviews", reviewService.get3MostRecentReviewsByProduct(product));
+			model.addAttribute("reviews", content);
 			
 			return "product/product_detail";
 		} catch (ProductNotFoundException e) {
